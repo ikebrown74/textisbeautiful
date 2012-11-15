@@ -1,0 +1,47 @@
+Bounce Template Changelog
+=========================
+=========================
+
+Bounce V2.1 - Coming Soon
+
+ -- Documentation
+
+ -- Multiple colors / themes
+
+ -- Blog page(s)
+
+ -- User area / profile page(s)
+      -- Maybe an admin panel / backend theme?
+
+
+Bounce V2 - Current Release
+
+ -- Compatible with latest version of Bootstrap (v2.1.1)
+
+ -- Supports both fixed-width and responsive layouts
+
+ -- Responsive video support with FitVids.js (http://fitvidsjs.com/)
+
+ -- Updated jquery (v1.8.2)
+
+ -- Switched to Google Web Fonts
+
+ -- New alternative homepage
+
+ -- New login / register pages and updated modals
+
+ -- Cleaner HTML and CSS
+      -- Seperated color stylesheet (in preperation for Bounce v2.1 coming soon)
+
+
+Bounce V1 - Initial Release
+
+ -- Compatible with Bootstrap 2.0.x
+
+
+=========================
+=========================
+Questions, suggestions, or problems?
+
+Contact me via my Wrap Bootstrap seller profile.
+https://wrapbootstrap.com/user/EvanC93 
