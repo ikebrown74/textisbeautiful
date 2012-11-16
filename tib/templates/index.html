@@ -1,157 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Text is Beautiful | Home</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="Evan Clemente">
-    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
-	<link href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" rel="stylesheet">
-	<link href="{{ STATIC_URL }}css/font-awesome.css" rel="stylesheet">
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-	<!--[if lt IE 8]>
-	  <link href="{{ STATIC_URL }}css/font-awesome-ie7.css" rel="stylesheet">
-    <![endif]-->
-    <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet">
-	<link href="{{ STATIC_URL }}css/blue.css" rel="stylesheet">
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link rel="shortcut icon" href="{{ STATIC_URL }}img/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ STATIC_URL }}img/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ STATIC_URL }}img/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ STATIC_URL }}img/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" href="{{ STATIC_URL }}img/ico/favicon.ico">
-  </head>  
-
-  <body>
-
-	<div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="btn btn-primary btn-dropnav" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>		
-          <a class="brand" href="index.html">Text is Beautiful</a>
-		  <div class="nav-collapse collapse">
-            <ul class="nav pull-right">
-              <li class="active"><a href="index.html">Home</a></li>
-{#			  <li><a href="alt.html">Alt. Home</a></li>#}
-              <li><a href="#">About</a></li>
-			  <li><a href="#">FAQ</a></li>
-{#			  <li><a href="pricing.html">Pricing</a></li>#}
-			  <li><a href="#">Login</a></li>
-			  <li><a href="#">Register</a></li>
-              <li><a href="#">Contact</a></li>
-            </ul>
-		  </div>
-        </div>
-      </div>
-    </div>	
-	
-	<div id="landing">
-	  <div class="container">  
-	    <div class="row">
-            <div class="span6">
-                <img alt="image" src="http://quickimage.it/800x300">
+{% extends "base.html" %}
+{% block body_content %}
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="btn btn-primary btn-dropnav" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="index.html">Text is Beautiful</a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right">
+                            <li class="active"><a href="/">Home</a></li>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">FAQ</a></li>
+                            <li><a href="/create/">Create</a></li>
+                            <li><a href="#">Login</a></li>
+                            <li><a href="#">Register</a></li>
+                            <li><a href="/contact/">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-		  <div class="span6">
-		    <h1>Make your text beautiful!</h1>
-			<p>Got an interesting piece of text you want to showcase? Looking for an innovative way to present some text to its audience? Want to get further insights into your text? Just like cool visualisations? Welcome!</p>
-		    <p><a href="#" class="btn btn-primary btn-action">Get Started Now</a></p>  
-		  </div>
+        </div>
 
-		</div>
-	  </div>
-	</div>
+        <div id="landing">
+            <div class="container">
+                <div class="row">
+                    <div class="span12">
+                        <h1>Make your text beautiful!</h1>
+                        <p>Got an interesting piece of text you want to showcase? Looking for an innovative way to present some text to its audience? Want to get further insights into your text? Just like cool visualisations? Welcome!</p>
+                        <p><a href="#" class="btn btn-primary btn-action">Make Text Beautiful</a>&nbsp;<a href="#" class="btn btn-success btn-action">Read the FAQ</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-	<div id="content" class="txt-middle">
-	  <div class="container">
-	    <div class="row">
-          <p>Here is some good looking text we prepared earlier....</p>
-		  <div class="span4">
-			<a class="thumbnail" href="">
-			  <img alt="image" src="http://quickimage.it/400x200">
-			</a>		
-			<h2>Vis 1</h2>
-			<p>Small description of a past vis.</p>
-		  </div>
-		  <div class="span4">
-			<a class="thumbnail" href="">
-			  <img alt="image" src="http://quickimage.it/400x200">
-			</a>
-              <h2>Vis 2</h2>
-              <p>Small description of a past vis.</p>
-		  </div>
-		  <div class="span4">
-			<a class="thumbnail" href="">
-			  <img alt="image" src="http://quickimage.it/400x200">
-			</a>
-              <h2>Vis 3</h2>
-              <p>Small description of a past vis.</p>
-		  </div>		  
-		</div>		
-	  </div>
-	</div>
-
-	<div id="footer">
-	  <div class="container">
-	    <div class="row">
-		  <div class="span4">
-			<h3>Quick Links</h3>
-			<ul>
-			  <li><a href="#">Home</a></li>
-			  <li><a href="#">About Us</a></li>
-			  <li><a href="#">FAQ</a></li>
-			</ul>
-		  </div>
-		  <div class="span4">
-			<h3>Stuff You Should See</h3>
-			<ul>
-			  <li><a href="http://leximancer.com">Leximancer</a></li>
-			  <li><a href="http://www.wordle.net">Wordle</a></li>
-			  <li><a href="#">FAQ</a></li>
-			</ul>	
-		  </div>
-		  <div class="span4">
-			<h3>We're Social</h3>
-			<ul>
-			  <li><a href="#">Facebook</a></li>
-			  <li><a href="#">Twitter</a></li>
-			  <li><a href="#">Google &#43;</a></li>
-			</ul>		  
-		  </div>
-		</div>
-      </div>	  
-    </div>
-
-	<div id="copywrite">
-	  <div class="container">
-	    <div class="row">
-		  <div class="span12">
-		    <p>&copy; 2012 Kris & Ryan <span id="totop" class="pull-right">Back to Top <i class="icon-arrow-up"></i></span></p>
-		  </div>		  
-		</div>	  
-      </div>	  
-    </div>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-	<script>window.jQuery || document.write('<script src="js/jquery-1.8.2.min.js"><\/script>')</script>
-    <script src="js/bootstrap.min.js"></script>
-	<script src="js/jquery.fitvids.js"></script>
-	<script>
-	$(document).ready(function(){
-      $("#totop").click(function () {
-		$("body, html").animate({
-		  scrollTop: 0
-	    }, 300);
-		return false;
-	  }); 
-	});
-	</script>	
-
-  </body>
-</html>
+        <div id="content" class="txt-middle">
+            <div class="container">
+                <div class="row">
+                    <p>Here is some good looking text we prepared earlier....</p>
+                    <div class="span4">
+                        <a class="thumbnail" href="">
+                            <img alt="image" src="http://quickimage.it/400x200">
+                        </a>
+                        <h2>Vis 1</h2>
+                        <p>Small description of a past vis.</p>
+                    </div>
+                    <div class="span4">
+                        <a class="thumbnail" href="">
+                            <img alt="image" src="http://quickimage.it/400x200">
+                        </a>
+                        <h2>Vis 2</h2>
+                        <p>Small description of a past vis.</p>
+                    </div>
+                    <div class="span4">
+                        <a class="thumbnail" href="">
+                            <img alt="image" src="http://quickimage.it/400x200">
+                        </a>
+                        <h2>Vis 3</h2>
+                        <p>Small description of a past vis.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}

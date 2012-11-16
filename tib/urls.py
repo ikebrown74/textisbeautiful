@@ -17,4 +17,6 @@ urlpatterns = patterns('',
     # url(r'^admin/', include(admin.site.urls)),
 
     (r'^$', TemplateView.as_view(template_name="index.html")),
+    (r'^contact/$', TemplateView.as_view(template_name="contact.html")),
+    (r'^create/$', TemplateView.as_view(template_name="create.html")),
 )
