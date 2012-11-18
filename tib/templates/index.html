@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% block page_title %}Home{% endblock %}
 {% block body_content %}
-        <div class="navbar navbar-fixed-top">
+    <div class="navbar navbar-fixed-top" xmlns="http://www.w3.org/1999/html">
             <div class="navbar-inner">
                 <div class="container">
                     <a class="btn btn-primary btn-dropnav" data-toggle="collapse" data-target=".nav-collapse">
@@ -12,11 +13,11 @@
                     <div class="nav-collapse collapse">
                         <ul class="nav pull-right">
                             <li class="active"><a href="/">Home</a></li>
-                            <li><a href="#">About</a></li>
-                            <li><a href="#">FAQ</a></li>
+                            <li><a href="/about/">About</a></li>
+                            <li><a href="/faq/">FAQ</a></li>
                             <li><a href="/create/">Create</a></li>
-                            <li><a href="#">Login</a></li>
-                            <li><a href="#">Register</a></li>
+{#                            <li><a href="#">Login</a></li>#}
+{#                            <li><a href="#">Register</a></li>#}
                             <li><a href="/contact/">Contact</a></li>
                         </ul>
                     </div>
@@ -30,7 +31,7 @@
                     <div class="span12">
                         <h1>Make your text beautiful!</h1>
                         <p>Got an interesting piece of text you want to showcase? Looking for an innovative way to present some text to its audience? Want to get further insights into your text? Just like cool visualisations? Welcome!</p>
-                        <p><a href="#" class="btn btn-primary btn-action">Make Text Beautiful</a>&nbsp;<a href="#" class="btn btn-success btn-action">Read the FAQ</a></p>
+                        <p><a href="/faq/" class="btn btn-success btn-action">Read the FAQ</a> <a href="/create/" class="btn btn-primary btn-action">Make Text Beautiful Now&nbsp;&nbsp;<i class="icon-chevron-right icon-white"></i></a></p>
                     </div>
                 </div>
             </div>
