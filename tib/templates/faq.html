@@ -8,11 +8,80 @@
                         <li><a href="/contact">Contact</a></li>
 {% endblock %}
 {% block body_content %}
+    <div id="header">
+        <div class="container">
+            <div class="row">
+                <div class="span12">
+                    <h1>FAQ</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="content">
         <div class="container">
             <div class="row">
-                <div class="span8">
-
+                <div class="span6">
+                    <h2>General</h2>
+                    <ul class="unstyled">
+                        <li><a href="#1_1">Who are you?</a></li>
+                        <li><a href="#1_2">Why did you make this site?</a></li>
+                        <li><a href="#1_3">Will this site remain free?</a></li>
+                        <li><a href="#1_4">Are you interested in a partnership/business/licensing deal?</a></li>
+                    </ul>
+                </div>
+                <div class="span6">
+                    <h2>Technical</h2>
+                    <ul class="unstyled">
+                        <li><a href="#2_1">How are you different to Wordle?</a></li>
+                        <li><a href="#2_2">Err, a concept? Say what?</a></li>
+                        <li><a href="#2_3">Can I download the visualisation I created as an image?</a></li>
+                        <li><a href="#2_4">Can I share it using &lt;insert social network name here&gt;?</a></li>
+                        <li><a href="#2_5">Can you make it available as a web service?</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span12">
+                    <h2>General</h2>
+                    <h4 id="1_1">Who are you?</h4>
+                    <p>Our names are Kris and Ryan. We are software engineers from Australia.</p>
+                    <h4 id="#1_2">Why did you make this site?</h4>
+                    <p>We have been long time admirers of Wordle. We both also work (at time of writing) for an Australia text analytics company called <a href="http://leximancer.com">Leximancer</a>. We have yearned for a Wordle that uses the position of words in the visualisation to convey relatedness. We also wanted to see a visualisation of concepts instead of just words. Towards the end of 2012 all the relevant technologies seemed to exist to make something that (tried to at least) build on what Wordle had done so we took the plunge and this is the result.</p>
+                    <h4 id="#1_3">Will this site remain free?</h4>
+                    <p>In short, yes. The longer answer is that it is extremely unlikely that we will reduce the number of features that are free. In fact, we are more likely to increase them. But we also haven't ruled out providing premium features.</p>
+                    <h4 id="#1_4">Are you interested in a partnership/business/licensing deal?</h4>
+                    <p>Possibly. We definitely aren't steadfastly against it. Try <a href="/contact/">contacting us</a> directly or contacting <a href="http://leximancer.com">Leximancer</a>.</p>
+                    <h2>Technical</h2>
+                    <h4 id="2_1">How are you different to Wordle?</h4>
+                    <p>Wordle takes your words and turns it into what most consider to be art. It creates stunning visuals that a great to look it. It does this by using word frequency - counting words. Much more advanced textual analytics now exist. They vary wildly in their approach from using hardcoded/fixed taxonomies to completely automatic solutions based on observed statistics.</p>
+                    <p>We thought it would be great to use some of the recent innovations in text analytics together with advances in web technologies to put together a modern text visualisation website. This is based entirely  on modern web technologies. The visualisations rely on Leximancer.</p>
+                    <p>There are a few key differences between textisbeautiful.net (TIB) and wordle.net (Wordle). Firstly, by default, TIB deals in concepts, not words. A concept is a collection of words that is automatically discovered from the text. This is at the crux of what Leximancer does. You should take the time to read the <a href="https://www.leximancer.com/science/">white paper published by Leximancer</a>.</p>
+                    <p>Secondly, TIB provides many more visualisations the just the word cloud Wordle proovides (in our case, we call it a concept cloud). Our concept cloud uses relative positioning to convey relatedness and also provides an exploded view. We also provide other visualisations and we hope to add more as we go. We even hope to open up the ability to add visualisations to the site so users can participate.</p>
+                    <h4 id="#2_2">Err, a concept? Say what?</h4>
+                    <p>A lot of people struggle with the difference bewteen a word and a concept. Leximancer provide a lot of material on their website about their software. Take the time to look though it. But in the spirit of trying to give you a quick understanding, here is a rudimentary example:</p>
+                    <p>Lets suppose you are reading <a href="http://www.gutenberg.org/cache/epub/11/pg11.txt">Alice in Wonderland</a>. This is the Wordle for the Alice in Wonderland book:</p>
+                    <div class="span12" style="text-align: center;">
+                        <img src="{{ STATIC_URL }}img/wordle-alice.png" class="img-polaroid">
+                    </div>
+                    <p>Now compare it to the TIB concept cloud:</p>
+                    <div class="span12" style="text-align: center;">
+                        <img src="http://quickimage.it/850x500" class="img-polaroid">
+                    </div>
+                    <p>Firstly, you'll notice that there is far more words on the Wordle image then there is concepts on the TIB image. That is because an concept is made up of several words - each concept has it's own thesaurus that is discovered from the text. Lets take the concept jury for example. You will barely notice the word jury on the Wordle image (it is on the left of the image, just to the right of get), but it comes out as a concept in teh TIB image. That's because it is the best name for the concept described by these thesaurus terms: jury, wrote, Write, memorandum, pun, death, condemn. The full list of terms is much longer, but you get the gist.</p>
+                    <p>Secondly, you'll notce that a lot of concepts in the TIB image share the same colour. This is because these concepts are highly related - they appear together often in the text. Although this behaviour can be overridden, we thnk it helps you to understand the text.</p>
+                    <p>Thirdly, unlike in the Wordle image, in the TIB image, a concepts proximity to other concepts is related to how related they are. As you see in the TIB image, King and Queen appear right near each other while Duchess and Caterpillar appear on opposite sides. This means the King and Queen concepts are highly related (they appear a lot together in the text) while Duchess and Caterpillar aren't.</p>
+                    <p>Finally, the TIB concept cloud has a handy explode button (see below). This layout is similar to the Leximancer concept map. Instead of trying to minimise white space, this layout encourages it when two concepts aren't related and discourages it when they are. In this layout, each concept exerts a pull on every other concept. How powerful that pull is depends on how related they are. You'll also notice the grey lines connceting concepts. Try following them to get an insight into the story (for example Alice -> large -> door).</p>
+                    <div class="span12" style="text-align: center;">
+                        <img src="http://quickimage.it/850x500" class="img-polaroid">
+                    </div>
+                    <p>Remember, this is just one of an ever increasing number of visualisations available. Go check the ret out for yourself, they all come with a detailed description.</p>
+                    <h4 id="#2_3">Can I download the visualisation I created as an image?</h4>
+                    <p>Yes, you certainly can. In fact, we encourage. Download the image, share it, use it in your work. Although attribution isn't required, it is definitely appreciated.</p>
+                    <h4 id="#2_4">Can I share it using &lt;insert social network name here&gt;?</h4>
+                    <p>We have built in support for Twitter, Google+ and Facebook. You can share it anywhere else you like by downloading the image directly from here and sharing it wherever you like.</p>
+                    <h4 id="#2_5">Can you make it available as a web service?</h4>
+                    <p>Possibly, it's something we will consider in the future. It might not be a free service though. If you really want to make your own visualisations like we have done here then you should contact Leximancer and get access to their software. This website is open source but Leximancer is a commercial product.</p>
                 </div>
             </div>
         </div>
