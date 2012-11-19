@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block page_title %}500{% endblock %}
+{% block menu_items %}
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/about/">About</a></li>
+                        <li><a href="/faq/">FAQ</a></li>
+                        <li><a href="/create/">Create</a></li>
+                        <li><a href="/contact">Contact</a></li>
+{% endblock %}
+{% block body_content %}
+    <div id="header">
+            <div class="container">
+                <div class="row">
+                    <div class="span12">
+                        <h1>Server Error 500</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="content">
+            <div class="container">
+                <div class="row">
+                    <div class="span12">
+                        <p>Whoops, unfortunately there was a server side error. Please go back or return <a href="/">home</a>. If the problem persists please <a href=">/contact/">contact us</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}

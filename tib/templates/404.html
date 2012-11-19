@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block page_title %}404{% endblock %}
+{% block menu_items %}
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/about/">About</a></li>
+                        <li><a href="/faq/">FAQ</a></li>
+                        <li><a href="/create/">Create</a></li>
+                        <li><a href="/contact">Contact</a></li>
+{% endblock %}
+{% block body_content %}
+    <div id="header">
+            <div class="container">
+                <div class="row">
+                    <div class="span12">
+                        <h1>Page Not Found 404</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="content">
+            <div class="container">
+                <div class="row">
+                    <div class="span12">
+                        <p>Whoops, we can't find find the page you are looking for ({{ request_path }}). You should either go back or return to the <a href="/">home page</a>. If you think this page should exist then <a href=">/contact/">contact us</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}

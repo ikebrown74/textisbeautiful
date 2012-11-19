@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block page_title %}FAQ{% endblock %}
+{% block menu_items %}
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/about/">About</a></li>
+                        <li><a href="/faq/">FAQ</a></li>
+                        <li class="active"><a href="/create/">Create</a></li>
+                        <li><a href="/contact">Contact</a></li>
+{% endblock %}
+{% block body_content %}
+    <div id="content">
+        <div class="container">
+            <div class="row">
+                <div class="span12">
+                    <div class="progress progress-striped active">
+                        <div id="run_progress" class="bar" style="width: 0%;"></div>
+                    </div>
+                    <p id="run_status">Creating the Leximancer Project....</p></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_script %}
+    <script>
+        $(document).ready(function() {
+            var executeAjax = function() {
+                $.ajax({
+                    url: '/result/{{ id }}/',
+                    dataType: 'json',
+                    success: function(data) {
+                        $("#run_status").text(data.message);
+                        $("#run_progress").css('width', String(data['progress']) + "%");
+
+                        if (data['completed'] === false) {
+                            setTimeout(executeAjax, 5000);
+                        } else {
+                            // Project has run, time to get visual!
+                            // TODO: VISUALS HERE. JSON DATA STORED IN data.markers VAR.
+                            console.log(data);
+                        }
+                    },
+                    error: function(data) {
+                        alert("There was an error running the analysis. Please go back and try again.");
+                    }
+                });
+            };
+            executeAjax();
+        });
+    </script>
+{% endblock %}

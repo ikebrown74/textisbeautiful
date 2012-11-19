@@ -1,30 +1,13 @@
 {% extends "base.html" %}
 {% block page_title %}About{% endblock %}
-{% block body_content %}
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="btn btn-primary btn-dropnav" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-                <a class="brand" href="index.html">Text is Beautiful</a>
-                <div class="nav-collapse collapse">
-                    <ul class="nav pull-right">
+{% block menu_items %}
                         <li><a href="/">Home</a></li>
                         <li class="active"><a href="/about/">About</a></li>
                         <li><a href="/faq/">FAQ</a></li>
                         <li><a href="/create/">Create</a></li>
-{#                        <li><a href="#">Login</a></li>#}
-{#                        <li><a href="#">Register</a></li>#}
                         <li><a href="/contact/">Contact</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
+{% endblock %}
+{% block body_content %}
     <div id="header">
         <div class="container">
             <div class="row">

@@ -1,9 +1,9 @@
 ###
-# Local settings
+# Local settings - for development
 ###
 
 # Leximancer related
-LEX_URL = "http://localhost:8085/lex3/c/start/app"
+LEX_URL = 'http://localhost:8085/lex3/c/start/app'
 LEX_AUTH = ('user1', '1user',)
 PROJECT_FOLDER = 'user1'
 DATA_FOLDER = 'user1'

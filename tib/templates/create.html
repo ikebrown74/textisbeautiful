@@ -1,30 +1,13 @@
 {% extends "base.html" %}
 {% block page_title %}Create{% endblock %}
-{% block body_content %}
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="btn btn-primary btn-dropnav" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-                <a class="brand" href="index.html">Text is Beautiful</a>
-                <div class="nav-collapse collapse">
-                    <ul class="nav pull-right">
+{% block menu_items %}
                         <li><a href="/">Home</a></li>
                         <li><a href="/about/">About</a></li>
                         <li><a href="/faq/">FAQ</a></li>
                         <li class="active"><a href="/create/">Create</a></li>
-{#                        <li><a href="#">Login</a></li>#}
-{#                        <li><a href="#">Register</a></li>#}
                         <li><a href="/contact/">Contact</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
+{% endblock %}
+{% block body_content %}
     <div id="header">
         <div class="container">
             <div class="row">
@@ -40,14 +23,23 @@
             <div class="container">
                 <div class="row">
                     <div class="span12">
+                        {% if text_error %}
+                        <div class="alert alert-error">
+                            <strong>Error!</strong> You managed to submit a number of characters outside the accepted range (playing with the JavaScript are we!?). Please submit between <strong>5000 and 100,000</strong> characters!
+                        </div>
+                        {% endif %}
                         <p>You've decided to create something beautiful, good to hear! It's pretty simple from here. Just copy and paste the text you want to use for your creation below.</p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="span12">
-                        <form>
-                            <textarea class="span8" rows="10"></textarea>
-                            <span class="help-block">Min 10,000 / Max 500,000 characters.</span>
+                        <form id="textForm" method="POST" action="/result/">
+                            {% csrf_token %}
+                            <div id="theText" class="control-group">
+                                <textarea class="span9" rows="10" name="text_content"></textarea>
+                                <small><span id="numChars" class="text-error">0</span> characters so far.</small>
+                                <span class="help-block">Min 5,000 / Max 100,000 characters.</span>
+                            </div>
                             <button type="submit" class="btn btn-success">Create Visualisation</button>
                         </form>
                     </div>
@@ -55,4 +47,37 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block extra_script %}
+    <script src="{{ STATIC_URL }}js/jquery.format-1.2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var typewatch = (function(){
+                var timer = 0;
+                return function(callback, ms){
+                    clearTimeout (timer);
+                    timer = setTimeout(callback, ms);
+                }
+            })();
+            $("#theText").keyup(function(event) {
+                typewatch(function() {
+                    var chars = event.srcElement.value.length;
+                    $('#numChars').text($.format.number(chars, '#,##0'));
+                    if (chars >= 5000 && chars <= 100000) {
+                        $('#numChars').removeClass().addClass("text-success");
+                        $("#theText").removeClass("error");
+                    } else {
+                        $('#numChars').removeClass().addClass("text-error");
+                    }
+                }, 500);
+            });
+            $("#textForm").submit(function(event) {
+                var chars = $("#theText > textarea").val().length;
+                if (chars < 5000 || chars > 100000) {
+                    $("#theText").addClass("error");
+                    return false;
+                }
+            });
+        });
+    </script>
 {% endblock %}
