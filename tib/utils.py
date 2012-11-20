@@ -149,7 +149,7 @@ def delete_project(url):
     """
     lex.rest_invoke(url, method='DELETE', auth=settings.LEX_AUTH)
 
-def get_concepts(markers_xml, id):
+def get_concepts(markers_xml):
     """
     Convert the markers XML file to JSON.
     """
@@ -180,11 +180,11 @@ def get_concepts(markers_xml, id):
         if marker.tag == 'mst':
             for node in marker:
                 for edge in node[0]:
-                    entities[int(node.attrib['id'])]['mstEdges'].append({'to': int(edge.attrib['id']), 'search_id': id})
+                    entities[int(node.attrib['id'])]['mstEdges'].append({'to': int(edge.attrib['id'])})
         if marker.tag == 'prominence':
             for node in marker[0]:
                 if node.tag == 'edge':
-                    prominence.append({'from': int(node.attrib['from']), 'to': int(node.attrib['to']), 'search_id': id})
+                    prominence.append({'from': int(node.attrib['from']), 'to': int(node.attrib['to']), 'weight': float(node.attrib['w'])})
     return entities, themes, prominence
 
 
