@@ -156,7 +156,6 @@ def get_concepts(markers_xml, id):
     results = []
     entities = {}
     themes = {}
-    mst = []
     prominence = []
 #    sections = lxml.etree.fromstring(xml_d?ata)
     markers = lxml.etree.fromstring(markers_xml)
@@ -168,6 +167,7 @@ def get_concepts(markers_xml, id):
                     'id': int(entity.attrib['id']),
                     'weight': float(entity.attrib['ctv']),
                     'frequency': int(entity.attrib['freq']),
+                    'mstEdges': [],
                     'value': entity.attrib['value'],
                     'kind': entity.attrib['kind'],
                     'themeId': entity.attrib['tid'],
@@ -180,11 +180,11 @@ def get_concepts(markers_xml, id):
         if marker.tag == 'mst':
             for node in marker:
                 for edge in node[0]:
-                    mst.append({'from': int(node.attrib['id']), 'to': int(edge.attrib['id']), 'search_id': id})
+                    entities[int(node.attrib['id'])]['mstEdges'].append({'to': int(edge.attrib['id']), 'search_id': id})
         if marker.tag == 'prominence':
             for node in marker[0]:
                 if node.tag == 'edge':
                     prominence.append({'from': int(node.attrib['from']), 'to': int(node.attrib['to']), 'search_id': id})
-    return entities, themes, mst, prominence
+    return entities, themes, prominence
 
 
