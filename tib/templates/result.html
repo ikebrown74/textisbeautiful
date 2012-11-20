@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block page_title %}FAQ{% endblock %}
+{% block extra_head %}<link href='http://fonts.googleapis.com/css?family=Average+Sans|ABeeZee|Cantora+One|Revalia|Kite+One|Montserrat+Alternates|Paprika|Butcherman|Sanchez|Share+Tech+Mono|Audiowide|Montserrat&subset=latin,latin-ext' rel='stylesheet' type='text/css'>{% endblock %}
 {% block menu_items %}
                         <li><a href="/">Home</a></li>
                         <li><a href="/about/">About</a></li>
@@ -10,17 +11,66 @@
 {% block body_content %}
     <div id="content">
         <div class="container">
-            <div class="row">
+            <div class="row" id="progress">
                 <div class="span12">
                     <div class="progress progress-striped active">
                         <div id="run_progress" class="bar" style="width: 0%;"></div>
                     </div>
                     <p id="run_status">Creating the Leximancer Project....</p></div>
             </div>
+            <div class="row">
+                <div class="span12">
+                    <ul id="vis-types" class="nav nav-pills" style="display:none">
+                        <li class="cloud active"><a href="#" onclick="tib.vis.toggleWebView(false);">Concept Cloud</a></li>
+                        <li class="web"><a href="#" onclick="tib.vis.toggleWebView(true);">Concept Web</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div id="vis-container" class="span12">
+                    <div id="vis-menu" style="display:none">
+                        <ul class="nav nav-pills">
+                            <li id="refresh-btn"><a href="#" onclick="tib.vis.activeVis.draw()">Refresh</a></li>
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    Text
+                                    <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu" id="text"></ul>
+                            </li>
+                            <li class="dropdown" id="layout-menu">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    Layout
+                                    <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu" id="layout"></ul>
+                            </li>
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    Share
+                                    <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="nav-header">Download</li>
+                                    <li><a href="#" onclick="tib.vis.activeVis.downloadPNG()">PNG</a></li>
+                                    <li><a href="#" onclick="tib.vis.activeVis.downloadSVG()">SVG</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="cloud" style="height: 490px; width: 900px;margin:0 auto;"></div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
 {% block extra_script %}
+    <script src="{{ STATIC_URL }}js/d3.v2.min.js"></script>
+    <script src="{{ STATIC_URL }}js/d3.layout.cloud.js"></script>
+    <script src="{{ STATIC_URL }}js/vis.js"></script>
+    <script src="{{ STATIC_URL }}js/cloud.js"></script>
+    <script src="{{ STATIC_URL }}js/uic.js"></script>
+    <script src="{{ STATIC_URL }}js/util.js"></script>
     <script>
         $(document).ready(function() {
             var executeAjax = function() {
@@ -35,8 +85,11 @@
                             setTimeout(executeAjax, 5000);
                         } else {
                             // Project has run, time to get visual!
-                            // TODO: VISUALS HERE. JSON DATA STORED IN data.markers VAR.
-                            console.log(data);
+                            tib.uic.initMenu();
+                            $('#progress').hide();
+                            $('#vis-types').show();
+                            $('#vis-container').css('border', '1px solid #ccc');
+                            tib.vis.init(data);
                         }
                     },
                     error: function(data) {

@@ -15,10 +15,10 @@ def result(request):
     """
     if request.method == "POST":
         text = request.POST['text_content']
-        if len(text) < 5000 or len(text) > 100000:
+        if len(text) < 5000 or len(text) > 105000:
             return render(request, 'create.html', {'text_error': True})
         # Unique ID for this search uses current time and the text
-        id = hashlib.md5('{0}:{1}'.format(time.time(), text)).hexdigest()
+        id = hashlib.md5('{0}:{1}'.format(time.time(), text.encode('utf8'))).hexdigest()
         # Write the text to a file (really shouldn't need to do this but oh well).
         doc = "{0}.txt".format(id)
         text_path = os.path.join(settings.TEXT_PATH, doc)
@@ -27,7 +27,7 @@ def result(request):
         destination = open(text_path, 'wb+')
         out = text
         if isinstance(out, unicode):
-            out = out.encode('utf-8')
+            out = out.encode('ascii', 'ignore')
         destination.write(out)
         destination.close()
         # Create the project
@@ -51,10 +51,10 @@ def status(request, id):
     if not result:
         return HttpResponse(json.dumps({"message": 'Creating Leximancer project...', 'progress': 0, 'completed': False}), content_type='text/json')
     elif result[0] == 'MAP':
-        concepts, themes, mst, prominence = utils.get_concepts(utils.get_markers(result[3]), id)
+        concepts, themes, prominence = utils.get_concepts(utils.get_markers(result[3]), id)
         # We don't want tp keep projects around.
         utils.delete_project(url)
-        return HttpResponse(json.dumps({"message": 'Your results are ready...', 'completed': True, 'progress': 100, 'markers': {"concepts": concepts, "themes": themes, "mst": mst, "iprom": prominence}}), content_type='text/json')
+        return HttpResponse(json.dumps({"message": 'Your results are ready...', 'completed': True, 'progress': 100, 'markers': {"concepts": concepts, "themes": themes, "iprom": prominence}}), content_type='text/json')
     else:
         if result[1] == 'error':
             return HttpResponseServerError("Leximancer project failed to run - {0}".format(result[2]))
