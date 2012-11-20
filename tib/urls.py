@@ -22,6 +22,8 @@ urlpatterns = patterns('',
     (r'^contact/$', TemplateView.as_view(template_name="contact.html")),
     (r'^create/$', TemplateView.as_view(template_name="create.html")),
     (r'^faq/$', TemplateView.as_view(template_name="faq.html")),
+    (r'^tree/$', TemplateView.as_view(template_name="tree.html")),
+    (r'^tree.json$', TemplateView.as_view(template_name="tree.json")),
 
     # Dynamic views
     url(r'^result/$', 'tib.views.result'),
