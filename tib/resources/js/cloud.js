@@ -12,40 +12,107 @@
 //// - Word limit
 //////////////////
 
-tib.cloud = {};
+tib.vis.cloud = {};
 
 // Word orientations
-tib.cloud.ORIENTATIONS = {
+tib.vis.cloud.ORIENTATIONS = {
     'Messy' : [5, 30, 60],
     'Horizontal' : [0, 0, 0],
     'Vertical' : [0, 0, 90]
 };
 
+// Canvas dimensions
+tib.vis.cloud.DIMENSIONS = {
+    width: 900,
+    height: 500,
+    padding: 0
+};
+
 // Cloud defaults
-tib.cloud.DEFAULTS = {
+tib.vis.cloud.DEFAULTS = {
     bold: false,
     italic: false,
     fill: d3.scale.category20(),
     font: 'Trebuchet MS',
     fontSize: d3.scale.pow().range([8, 160]),
     mode: 'Archimedean',
-    orientation: tib.cloud.ORIENTATIONS['Horizontal'],
+    orientation: tib.vis.cloud.ORIENTATIONS['Horizontal'],
     webMode: false,
     words: []
 }
 
 /**
- * Encapsualtes the Concept Cloud visualisation.
+ * Encapsulates the Concept Cloud visualisation.
  */
-tib.cloud.ConceptCloud = function ConceptCloud (data) {
+tib.vis.ConceptCloud = function ConceptCloud (data) {
     
-    $.extend(this, tib.cloud.DEFAULTS);
-    $.extend(this, data);
-    this.fontSize.domain(this.sizeDomain);
+    $.extend(this, tib.vis.cloud.DEFAULTS);
+    $.extend(this, tib.vis.cloud.DIMENSIONS);
     
     this.layout = null;
     var self = this;
-    
+
+    /*
+     * Create the data structures need for this vis from the JSON the server returned.
+     */
+    var loadData = function(data) {
+        var cluster = {};
+        var mst = [];
+        var words = [];
+        var wordsForName = {};
+        var wordNamesForId = {};
+        var minSize = null;
+        var maxSize = null;
+        for (var id in data.markers.concepts) {
+            var w = data.markers.concepts[id];
+            words.push(word = {
+                edges: w.mstEdges,
+                size: w.weight*1,
+                text: w.value
+            });
+            if (minSize == null) {
+                minSize = maxSize = word.size;
+            }
+            else {
+                minSize = Math.min(minSize, word.size);
+                maxSize = Math.max(maxSize, word.size)
+            }
+            cluster[word.text] = {
+                x: w.x * self.width/2,
+                y: w.y * self.height/2
+            };
+            wordNamesForId[w.id] = w.value;
+            wordsForName[word.text] = word;
+        }
+
+        // Sort words by size, decreasing
+        words.sort(function (a, b) { return b.size - a.size;});
+
+        // Normalise text size and build mst
+        for (var i = 0; i < words.length; i++) {
+            var word = words[i];
+            for (var j = 0; j < word.edges.length; j++) {
+                var toWordName = wordNamesForId[word.edges[j].to];
+                mst.push({
+                    x1: cluster[word.text].x,
+                    y1: cluster[word.text].y,
+                    x2: cluster[toWordName].x,
+                    y2: cluster[toWordName].y
+                });
+            }
+        }
+
+        return  {
+            cluster: cluster,
+            mst: mst,
+            sizeDomain: [minSize, maxSize],
+            words: words,
+            wordsForName: wordsForName
+        };
+    };
+    $.extend(this, loadData(data));
+    this.fontSize.domain(this.sizeDomain);
+
     /**
      * Export cloud as image/png.
      */
@@ -54,15 +121,15 @@ tib.cloud.ConceptCloud = function ConceptCloud (data) {
         // Use canvas to generate png data
         var canvas = document.createElement("canvas"),
             c = canvas.getContext("2d");
-        canvas.width = WIDTH;
-        canvas.height = HEIGHT;
-        c.translate(WIDTH >> 1, HEIGHT >> 1);
+        canvas.width = self.width;
+        canvas.height = self.height;
+        c.translate(self.width >> 1, self.height >> 1);
         c.scale(1, 1);
         
         var self = this;
         
         // Links
-        d3.selectAll('div#cloud svg path').each(function (line) {
+        d3.selectAll('div#vis-cloud svg path').each(function (line) {
             c.strokeStyle = "#ccc";
             c.lineWidth = 1;
             c.beginPath();
@@ -73,7 +140,7 @@ tib.cloud.ConceptCloud = function ConceptCloud (data) {
         });
         
         // Words
-        d3.selectAll("div#cloud svg text").each(function (word) {
+        d3.selectAll("div#vis-cloud svg text").each(function (word) {
             c.save();
             if (self.webMode) {
                 c.translate(self.cluster[word.text].x, self.cluster[word.text].y);
@@ -114,7 +181,7 @@ tib.cloud.ConceptCloud = function ConceptCloud (data) {
         if (font != this.font) {
             this.font = font;
             if (this.webMode) {
-                d3.selectAll('div#cloud svg text').style('font-family', font);
+                d3.selectAll('div#vis-cloud svg text').style('font-family', font);
             }
             else {
                 this.draw();    
@@ -131,7 +198,7 @@ tib.cloud.ConceptCloud = function ConceptCloud (data) {
         if (name == 'bold' || name == 'italic') {
             this[name] = !this[name];
             if (this.webMode) {
-                d3.selectAll('div#cloud svg text')
+                d3.selectAll('div#vis-cloud svg text')
                     .style("font-style", self.italic ? 'italic' : 'normal')
                     .style("font-weight", self.bold ? 'bold' : 'normal')
             }
@@ -147,17 +214,17 @@ tib.cloud.ConceptCloud = function ConceptCloud (data) {
     this.toggleWeb = function () {
         
         if (this.webMode) {
-            $('#layout-menu').hide();
-            $('#refresh-btn').hide();
+            $('#cloud-layout-menu').hide();
+            $('#cloud-btn-refresh').hide();
         }
         else {
-            $('#layout-menu').show();
-            $('#refresh-btn').show();
+            $('#cloud-layout-menu').show();
+            $('#cloud-btn-refresh').show();
         }
         
         drawSpanningTreeLinks();
             
-        d3.selectAll("div#cloud svg text").transition()
+        d3.selectAll("div#vis-cloud svg text").transition()
             .duration(750)
             .style("font-size", function(d) { return (self.webMode ? getFontSizeForWeb(d.size) : d.size) + "px"; })
             .attr("transform", function(d) {
@@ -169,13 +236,13 @@ tib.cloud.ConceptCloud = function ConceptCloud (data) {
     
     // Draw the links for the MST.
     var drawSpanningTreeLinks = function () {
-        d3.selectAll("div#cloud svg path").remove();
+        d3.selectAll("div#vis-cloud svg path").remove();
         if (self.webMode) {
-            d3.select("div#cloud svg").selectAll("path")
+            d3.select("div#vis-cloud svg").selectAll("path")
                 .data(self.mst)
                 .enter().insert("path", ":first-child")
                 .attr("d", function (d) { return "M " + d.x1 + ", " + d.y1 + " L" + d.x2 + ", " + d.y2})
-                .attr("transform", "translate(" + WIDTH/2 + "," + HEIGHT/2 + ")")
+                .attr("transform", "translate(" + self.width/2 + "," + self.height/2 + ")")
                 .style("stroke-width", 1)
                 .style("stroke", "#ccc")
                 .style("fill", "none");
@@ -185,12 +252,12 @@ tib.cloud.ConceptCloud = function ConceptCloud (data) {
     // Render the words
     var drawWords = function (words) {
         self.renderedWords = words;
-        $('div#cloud').empty();
-            d3.select("div#cloud").append("svg")
-                .attr("width", WIDTH)
-                .attr("height", HEIGHT)
+        $('div#vis-cloud').empty();
+            d3.select("div#vis-cloud").append("svg")
+                .attr("width", self.width)
+                .attr("height", self.height)
                 .append("g")
-                    .attr("transform", "translate(" + WIDTH/2 + "," + HEIGHT/2 + ")")
+                    .attr("transform", "translate(" + self.width/2 + "," + self.height/2 + ")")
                     .selectAll("text")
                     .data(words)
                     .enter().append("text")
@@ -208,7 +275,7 @@ tib.cloud.ConceptCloud = function ConceptCloud (data) {
     
     // Start the D3 drawing process
     var generate = function () {
-        self.layout = d3.layout.cloud().size([WIDTH, HEIGHT])
+        self.layout = d3.layout.cloud().size([self.width, self.height])
             .words(self.words)
             .rotate(function(d) { return ~~(Math.random() * self.orientation[0]) * self.orientation[1] - self.orientation[2]; })
             .spiral(self.mode.toLowerCase())
@@ -224,6 +291,53 @@ tib.cloud.ConceptCloud = function ConceptCloud (data) {
     var getFontSizeForWeb = function (originalSize) {
         return 2 + 3 * Math.sqrt(originalSize);
     };
-    
+
+    /**
+     * Initialise the menu for this vis.
+     */
+    this.initMenu = function () {
+
+        // Text selection
+        var textUI = $('ul#cloud-menu-text');
+        // Style
+        textUI.append($('<li class="nav-header">Style</li>'));
+        textUI.append(
+            $('<li class="style"><a href="#" onclick="tib.vis.toggleStyle(this, \'bold\');" style="font-weight:bold">Bold</a></li>'),
+            $('<li class="style"><a href="#" onclick="tib.vis.toggleStyle(this, \'italic\');" style="font-style:italic">Italic</a></li>')
+        );
+        // Font
+        textUI.append($('<li class="nav-header">Font</li>'));
+        $(tib.uic.FONTS).each(function (i, font) {
+            var listEl = $('<li class="font"><a href="#" onclick="tib.vis.selectFont(this);" style="font-family:' + font + '">' + font + '</a></li>');
+            if (font == tib.vis.cloud.DEFAULTS.font) {
+                listEl.addClass('active')
+            }
+            textUI.append(listEl);
+        });
+
+        // Layout selection
+        var layoutUI = $('ul#cloud-menu-layout');
+        // Mode
+        layoutUI.append($('<li class="nav-header">Cloud Shape</li>'));
+        $(['Archimedean', 'Rectangular']).each(function (i, mode) {
+            var listEl = $('<li class="mode"><a href="#" onclick="tib.vis.selectMode(this,\'' + mode + '\');">' + mode.replace('Archimedean', 'Circular') + '</a></li>');
+            if (mode == tib.vis.cloud.DEFAULTS.mode) {
+                listEl.addClass('active')
+            }
+            layoutUI.append(listEl);
+        });
+        // Orientation
+        layoutUI.append($('<li class="nav-header">Word Orientation</li>'));
+        $.each(tib.vis.cloud.ORIENTATIONS, function (key, value) {
+            var listEl = $('<li class="orientation"><a href="#" onclick="tib.vis.selectOrientation(this);">' + key + '</a></li>');
+            if (value == tib.vis.cloud.DEFAULTS.orientation) {
+                listEl.addClass('active')
+            }
+            layoutUI.append(listEl);
+        });
+
+        $('#cloud-menu').show();
+    };
+
     return this;
 };

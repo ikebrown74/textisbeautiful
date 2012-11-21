@@ -28,38 +28,59 @@
             </div>
             <div class="row">
                 <div id="vis-container" class="span12">
-                    <div id="vis-menu" style="display:none">
-                        <ul class="nav nav-pills">
-                            <li id="refresh-btn"><a href="#" onclick="tib.vis.activeVis.draw()">Refresh</a></li>
-                            <li class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    Font
-                                    <b class="caret"></b>
-                                </a>
-                                <ul class="dropdown-menu" id="text"></ul>
-                            </li>
-                            <li class="dropdown" id="layout-menu">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    Layout
-                                    <b class="caret"></b>
-                                </a>
-                                <ul class="dropdown-menu" id="layout"></ul>
-                            </li>
-                            <li class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    Share
-                                    <b class="caret"></b>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li class="nav-header">Download</li>
-                                    <li><a href="#" onclick="tib.vis.activeVis.downloadPNG()">PNG</a></li>
-                                    <li><a href="#" onclick="tib.vis.activeVis.downloadSVG()">SVG</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#">What am I looking at?</a></li>
-                        </ul>
+                    <div id="cloud">
+                        <div id="cloud-menu" style="display:none">
+                            <ul class="nav nav-pills">
+                                <li id="cloud-btn-refresh"><a href="#" onclick="tib.vis.activeVis.draw()">Refresh</a></li>
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        Font
+                                        <b class="caret"></b>
+                                    </a>
+                                    <ul class="dropdown-menu" id="cloud-menu-text"></ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        Layout
+                                        <b class="caret"></b>
+                                    </a>
+                                    <ul class="dropdown-menu" id="cloud-menu-layout"></ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        Share
+                                        <b class="caret"></b>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="nav-header">Download</li>
+                                        <li><a href="#" onclick="tib.vis.activeVis.downloadPNG()">PNG</a></li>
+                                        <li><a href="#" onclick="tib.vis.activeVis.downloadSVG()">SVG</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#">What am I looking at?</a></li>
+                            </ul>
+                        </div>
+                        <div id="vis-cloud" style="height: 490px; width: 900px; margin: 0 auto;"></div>
                     </div>
-                    <div id="cloud" style="height: 490px; width: 900px;margin:0 auto;"></div>
+                    <div id="storywheel" style="display:none">
+                        <div id="menu-sw">
+                            <ul class="nav nav-pills">
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        Share
+                                        <b class="caret"></b>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="nav-header">Download</li>
+                                        <li><a href="#" onclick="tib.vis.activeVis.downloadPNG()">PNG</a></li>
+                                        <li><a href="#" onclick="tib.vis.activeVis.downloadSVG()">SVG</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#">What am I looking at?</a></li>
+                            </ul>
+                        </div>
+                        <div id="vis-sw" style="height: 900px; width: 900px; margin: 0 auto;"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -86,11 +107,11 @@
                             setTimeout(executeAjax, 5000);
                         } else {
                             // Project has run, time to get visual!
-                            tib.uic.initMenu();
                             $('#progress').hide();
                             $('#vis-types').show();
                             $('#vis-container').css('border', '1px solid #ccc');
                             tib.vis.init(data);
+                            tib.vis.activeVis.initMenu();
                         }
                     },
                     error: function(data) {
