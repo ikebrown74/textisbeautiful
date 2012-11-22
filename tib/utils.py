@@ -26,7 +26,7 @@ STATUS_MAP = {
     'FINDSEEDS': 55,
     'LEARN': 665,
     'CLASSIFY': 78,
-    'CLUSTER': 9,
+    'CLUSTER': 90,
 }
 
 def get_project_folder():
