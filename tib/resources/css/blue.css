@@ -47,6 +47,15 @@ body {
     color: #17405E;
 }
 
+/* Carousel
+-------------------------------------------------- */
+.carousel-control {
+    color: #0088CC;
+}
+.carousel-control:hover {
+    color: #17405E;
+}
+
 /* Call to Action Headline
 -------------------------------------------------- */
 #headline {

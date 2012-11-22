@@ -12,43 +12,38 @@
 //// - Word limit
 //////////////////
 
-tib.vis.cloud = {};
-
-// Word orientations
-tib.vis.cloud.ORIENTATIONS = {
-    'Messy' : [5, 30, 60],
-    'Horizontal' : [0, 0, 0],
-    'Vertical' : [0, 0, 90]
-};
-
-// Canvas dimensions
-tib.vis.cloud.DIMENSIONS = {
-    width: 900,
-    height: 500,
-    padding: 0
-};
-
-// Cloud defaults
-tib.vis.cloud.DEFAULTS = {
-    bold: false,
-    italic: false,
-    fill: d3.scale.category20(),
-    font: 'Trebuchet MS',
-    fontSize: d3.scale.pow().range([8, 160]),
-    mode: 'Archimedean',
-    orientation: tib.vis.cloud.ORIENTATIONS['Horizontal'],
-    webMode: false,
-    words: []
-}
+tib.vis.registerVis()
 
 /**
  * Encapsulates the Concept Cloud visualisation.
  */
-tib.vis.ConceptCloud = function ConceptCloud (data) {
-    
-    $.extend(this, tib.vis.cloud.DEFAULTS);
-    $.extend(this, tib.vis.cloud.DIMENSIONS);
-    
+tib.vis.ConceptCloud = function ConceptCloud (config, data) {
+
+    var orientations = {
+        'Messy' : [5, 30, 60],
+        'Horizontal' : [0, 0, 0],
+        'Vertical' : [0, 0, 90]
+    };
+
+    /////////////////
+    // Setup class properties
+    /////////////////
+    // Defaults
+    this.bold = false;
+    this.italic = false;
+    this.fill = d3.scale.category20();
+    this.font = 'Trebuchet MS';
+    this.fontSize = d3.scale.pow().range([8, 160]);
+    this.mode = 'Archimedean';
+    this.orientation = orientations['Horizontal'];
+    this.webMode = null;
+    this.words = [];
+    // Default component IDs
+    this.drawTarget = "vis-canvas";
+    this.target = "vis-container";
+
+    $.extend(this, config);
+
     this.layout = null;
     var self = this;
 
@@ -67,7 +62,7 @@ tib.vis.ConceptCloud = function ConceptCloud (data) {
             var w = data.markers.concepts[id];
             words.push(word = {
                 edges: w.mstEdges,
-                size: w.weight*1,
+                size: parseInt(w.weight, 10),
                 text: w.value
             });
             if (minSize == null) {
@@ -121,13 +116,14 @@ tib.vis.ConceptCloud = function ConceptCloud (data) {
         // Use canvas to generate png data
         var canvas = document.createElement("canvas"),
             c = canvas.getContext("2d");
+        var self = this;
+
         canvas.width = self.width;
         canvas.height = self.height;
         c.translate(self.width >> 1, self.height >> 1);
         c.scale(1, 1);
         
-        var self = this;
-        
+
         // Links
         d3.selectAll('div#vis-cloud svg path').each(function (line) {
             c.strokeStyle = "#ccc";
@@ -152,45 +148,63 @@ tib.vis.ConceptCloud = function ConceptCloud (data) {
             }
             c.rotate(word.rotate * Math.PI / 180);
             c.textAlign = "center";
-            c.fillStyle = word.fill
+            c.fillStyle = word.fill;
             c.fillText(word.text, 0, 0);
             c.restore();
         });
         
         window.open(canvas.toDataURL("image/png"));
-    }
+    };
     
     /**
      * Export cloud as svg.
      */
     this.downloadSVG = function () {
-        tib.util.downloadSVG();
+        tib.util.downloadSVG(self.drawTarget);
+    };
+
+    /**
+     * Select the layout mode for the cloud.
+     *
+     * @param value The string value for the layout desired.
+     */
+    this.selectMode = function (value) {
+        self.mode = value;
+        self.draw();
     };
     
     /**
      * Draw the concept cloud visualisation.
      */
     this.draw = function () {
+
         generate();
     };
     
     /**
      * Select a font for the cloud.
+     * @param {String} font The font name of the desired font
      */
     this.selectFont = function (font) {
         if (font != this.font) {
             this.font = font;
             if (this.webMode) {
-                d3.selectAll('div#vis-cloud svg text').style('font-family', font);
+                d3.selectAll('div#' + self.drawTarget + ' svg text').style('font-family', font);
             }
             else {
                 this.draw();    
             }
         }
     };
+
+    this.selectOrientation = function(orientation) {
+        self.orientation = orientations[orientation];
+        self.draw();
+    };
     
     /**
      * Toggle style attribute (bold, italic).
+     * @param name The string style desired. Valid options or 'bold' or 'italic'.
      */
     this.toggleStyle = function (name) {
         name = name.toLowerCase();
@@ -198,7 +212,7 @@ tib.vis.ConceptCloud = function ConceptCloud (data) {
         if (name == 'bold' || name == 'italic') {
             this[name] = !this[name];
             if (this.webMode) {
-                d3.selectAll('div#vis-cloud svg text')
+                d3.selectAll('div#' + self.drawTarget + ' svg text')
                     .style("font-style", self.italic ? 'italic' : 'normal')
                     .style("font-weight", self.bold ? 'bold' : 'normal')
             }
@@ -212,19 +226,19 @@ tib.vis.ConceptCloud = function ConceptCloud (data) {
      * Toggle concept web visualisation mode.
      */
     this.toggleWeb = function () {
-        
-        if (this.webMode) {
-            $('#cloud-layout-menu').hide();
-            $('#cloud-btn-refresh').hide();
+        self.webMode = !self.webMode;
+        if (self.webMode === true) {
+            $('#cloud-menu-layout').hide();
+            $('#cloud-menu-refresh').hide();
         }
         else {
-            $('#cloud-layout-menu').show();
-            $('#cloud-btn-refresh').show();
+            $('#cloud-menu-layout').show();
+            $('#cloud-menu-refresh').show();
         }
         
         drawSpanningTreeLinks();
             
-        d3.selectAll("div#vis-cloud svg text").transition()
+        d3.selectAll('div#' + self.drawTarget + ' svg text').transition()
             .duration(750)
             .style("font-size", function(d) { return (self.webMode ? getFontSizeForWeb(d.size) : d.size) + "px"; })
             .attr("transform", function(d) {
@@ -236,9 +250,9 @@ tib.vis.ConceptCloud = function ConceptCloud (data) {
     
     // Draw the links for the MST.
     var drawSpanningTreeLinks = function () {
-        d3.selectAll("div#vis-cloud svg path").remove();
-        if (self.webMode) {
-            d3.select("div#vis-cloud svg").selectAll("path")
+        d3.selectAll('div#' + self.drawTarget + ' svg path').remove();
+        if (self.webMode === true) {
+            d3.select('div#' + self.drawTarget + ' svg').selectAll("path")
                 .data(self.mst)
                 .enter().insert("path", ":first-child")
                 .attr("d", function (d) { return "M " + d.x1 + ", " + d.y1 + " L" + d.x2 + ", " + d.y2})
@@ -252,8 +266,8 @@ tib.vis.ConceptCloud = function ConceptCloud (data) {
     // Render the words
     var drawWords = function (words) {
         self.renderedWords = words;
-        $('div#vis-cloud').empty();
-            d3.select("div#vis-cloud").append("svg")
+        $('div#' + self.drawTarget).empty();
+            d3.select("div#" + self.drawTarget).append("svg")
                 .attr("width", self.width)
                 .attr("height", self.height)
                 .append("g")
@@ -277,7 +291,7 @@ tib.vis.ConceptCloud = function ConceptCloud (data) {
     var generate = function () {
         self.layout = d3.layout.cloud().size([self.width, self.height])
             .words(self.words)
-            .rotate(function(d) { return ~~(Math.random() * self.orientation[0]) * self.orientation[1] - self.orientation[2]; })
+            .rotate(function() { return ~~(Math.random() * self.orientation[0]) * self.orientation[1] - self.orientation[2]; })
             .spiral(self.mode.toLowerCase())
             .font(self.font)
             .fontSize(function(d) { return self.fontSize(+d.size); })
@@ -293,50 +307,112 @@ tib.vis.ConceptCloud = function ConceptCloud (data) {
     };
 
     /**
-     * Initialise the menu for this vis.
+     * Initialise the menu for this vis. This method injects the menu into the corrext place.
      */
     this.initMenu = function () {
 
-        // Text selection
-        var textUI = $('ul#cloud-menu-text');
-        // Style
-        textUI.append($('<li class="nav-header">Style</li>'));
-        textUI.append(
-            $('<li class="style"><a href="#" onclick="tib.vis.toggleStyle(this, \'bold\');" style="font-weight:bold">Bold</a></li>'),
-            $('<li class="style"><a href="#" onclick="tib.vis.toggleStyle(this, \'italic\');" style="font-style:italic">Italic</a></li>')
-        );
-        // Font
-        textUI.append($('<li class="nav-header">Font</li>'));
-        $(tib.uic.FONTS).each(function (i, font) {
-            var listEl = $('<li class="font"><a href="#" onclick="tib.vis.selectFont(this);" style="font-family:' + font + '">' + font + '</a></li>');
-            if (font == tib.vis.cloud.DEFAULTS.font) {
-                listEl.addClass('active')
-            }
-            textUI.append(listEl);
-        });
+        // Top level menu
+        var menuContainer = $('#vis-menu');
 
+        /* Build the menu - last has to come first to preserve the share button */
         // Layout selection
-        var layoutUI = $('ul#cloud-menu-layout');
-        // Mode
-        layoutUI.append($('<li class="nav-header">Cloud Shape</li>'));
+        $(menuContainer).prepend('<li class="dropdown" id="cloud-menu-layout"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Layout<b class="caret"></b></a><ul class="dropdown-menu" id="cloud-menu-layout"></ul></li>');
+        var layoutMenu = $('#cloud-menu-layout ul');
+        // Mode options
+        layoutMenu.append($('<li class="nav-header">Cloud Shape</li>'));
         $(['Archimedean', 'Rectangular']).each(function (i, mode) {
-            var listEl = $('<li class="mode"><a href="#" onclick="tib.vis.selectMode(this,\'' + mode + '\');">' + mode.replace('Archimedean', 'Circular') + '</a></li>');
-            if (mode == tib.vis.cloud.DEFAULTS.mode) {
+            var listEl = $('<li class="mode"><a href="#">' + mode.replace('Archimedean', 'Circular') + '</a></li>');
+            // Click handler
+            listEl.click(function(e) {
+                e.preventDefault();
+                self.selectMode(mode);
+                $('ul#cloud-menu-layout li.mode').removeClass('active');
+                listEl.addClass('active');
+            });
+            if (mode == self.mode) {
                 listEl.addClass('active')
             }
-            layoutUI.append(listEl);
+            layoutMenu.append(listEl);
         });
-        // Orientation
-        layoutUI.append($('<li class="nav-header">Word Orientation</li>'));
-        $.each(tib.vis.cloud.ORIENTATIONS, function (key, value) {
-            var listEl = $('<li class="orientation"><a href="#" onclick="tib.vis.selectOrientation(this);">' + key + '</a></li>');
-            if (value == tib.vis.cloud.DEFAULTS.orientation) {
+        // Orientation options
+        layoutMenu.append($('<li class="nav-header">Word Orientation</li>'));
+        $.each(orientations, function (key, value) {
+            var listEl = $('<li class="orientation"><a href="#">' + key + '</a></li>');
+            // Click handler
+            listEl.click(function(e) {
+                e.preventDefault();
+                self.selectOrientation(key);
+                $('ul#cloud-menu-layout li.orientation').removeClass('active');
+                listEl.addClass('active');
+            });
+
+            if (value == self.orientation) {
                 listEl.addClass('active')
             }
-            layoutUI.append(listEl);
+            layoutMenu.append(listEl);
         });
 
-        $('#cloud-menu').show();
+        // Font selection
+        $(menuContainer).prepend('<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Font<b class="caret"></b></a><ul class="dropdown-menu" id="cloud-menu-text"></ul></li>');
+        var fontMenu = $('ul#cloud-menu-text');
+        // Style options
+        fontMenu.append($('<li class="nav-header">Style</li>'));
+        $('<li class="style"><a href="#" style="font-weight:bold">Bold</a></li>').appendTo(fontMenu)
+            // Click handler
+            .click(function(e) {
+                e.preventDefault();
+                // This is set to the event target
+                $(this).toggleClass('active');
+                self.toggleStyle('bold');
+            });
+        $('<li class="style"><a href="#" style="font-weight:bold">Italic</a></li>').appendTo(fontMenu)
+            // Click handler
+            .click(function(e) {
+                e.preventDefault();
+                $(this).toggleClass('active');
+                self.toggleStyle('italic');
+            });
+        // Font Family options
+        fontMenu.append('<li class="nav-header">Font</li>');
+        $(tib.uic.FONTS).each(function (i, font) {
+            var listEl = $('<li class="font"><a href="#" style="font-family:' + font + '">' + font + '</a></li>');
+            // Click handler
+            listEl.click(function(e) {
+                e.preventDefault();
+                self.selectFont(font);
+                $('ul#cloud-menu-text li.font').removeClass('active');
+                listEl.addClass('active');
+            });
+            // Make sure the current font is set as active.
+            if (font == self.font) {
+                listEl.addClass('active');
+            }
+            fontMenu.append(listEl);
+        });
+
+        // Refresh button
+        $('<li id="cloud-menu-refresh"><a href="#">Refresh</a></li>').prependTo(menuContainer)
+            .click(function(e) {
+                e.preventDefault();
+                self.draw();
+            });
+    };
+
+    this.activate = function() {
+        if (self.webMode === null) {
+            $('#' + self.drawTarget).css('width', String(self.width) + 'px');
+            self.initMenu();
+            self.draw();
+            self.webMode = false;
+        } else if (self.webMode === false) {
+            $('#vis-types li').removeClass('active');
+            $('#vis-types li.web').addClass('active');
+            self.toggleWeb();
+        } else {
+            $('#vis-types li').removeClass('active');
+            $('#vis-types li.cloud').addClass('active');
+            self.toggleWeb();
+        }
     };
 
     return this;

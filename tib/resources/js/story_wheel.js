@@ -1,4 +1,12 @@
 
+// Canvas dimensions
+tib.vis.cloud.DIMENSIONS = {
+    width: 900,
+    height: 500,
+    padding: 0
+};
+
+
 tib.vis.StoryWheel = function StoryWheel(data) {
     /**
      * Draw the concept cloud visualisation.

@@ -157,6 +157,37 @@ body, button {
     opacity: 1;
 }
 
+/* Carousel
+------------------------------------------*/
+.carousel {
+    margin-bottom: 0;
+}
+.carousel .item > img {
+    margin: 0 auto;
+}
+.carousel-control {
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    font-size: 30px;
+    height: auto;
+    margin-top: 0;
+    opacity: 1;
+    top: 50%;
+    width: auto;
+}
+.carousel-control.left {
+    left: -17px;
+}
+.carousel-control.right {
+    right: -17px;
+}
+.carousel-control:hover {
+    opacity: 1;
+}
+
 /* Call to Action Headline
 -------------------------------------------------- */
 #headline {

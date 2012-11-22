@@ -12,75 +12,70 @@
     <div id="content">
         <div class="container">
             <div class="row" id="progress">
-                <div class="span12">
+                <div class="span12 txt-middle">
                     <div class="progress progress-striped active">
                         <div id="run_progress" class="bar" style="width: 0%;"></div>
                     </div>
-                    <p id="run_status">Creating the Leximancer Project....</p></div>
+                    <p id="run_status">Creating the Leximancer Project....</p>
+
+                </div>
+            </div>
+            <div class="row" id="slides">
+                <div class="span12 txt-middle">
+                    <div class="span8 offset2">
+                        <div id="myCarousel" class="carousel slide">
+                            <div class="carousel-inner">
+                                <div class="active item"><img alt="" src="http://quickimage.it/800x400"></div>
+                                <div class="item"><img alt="" src="http://quickimage.it/800x400"></div>
+                                <div class="item"><img alt="" src="http://quickimage.it/800x400"></div>
+                            </div>
+                            <a class="carousel-control left" href="#myCarousel" data-slide="prev"><i class="icon-chevron-left"></i></a>
+                            <a class="carousel-control right" href="#myCarousel" data-slide="next"><i class="icon-chevron-right"></i></a>
+                        </div>
+                        <h3>Here's a quick primer of the visualisations you're about to see</h3>
+                    </div>
+                </div>
             </div>
             <div class="row">
                 <div class="span12">
                     <ul id="vis-types" class="nav nav-pills" style="display:none">
-                        <li class="cloud active"><a href="#" onclick="tib.vis.toggleWebView(false);">Concept Cloud</a></li>
-                        <li class="web"><a href="#" onclick="tib.vis.toggleWebView(true);">Concept Web</a></li>
+                        <li class="cloud active"><a href="#" onclick="tib.vis.activate('cloud');return false;">Concept Cloud</a></li>
+                        <li class="web"><a href="#" onclick="tib.vis.activate('cloud');return false;">Concept Web</a></li>
                     </ul>
                 </div>
             </div>
             <div class="row">
-                <div id="vis-container" class="span12">
-                    <div id="cloud">
-                        <div id="cloud-menu" style="display:none">
-                            <ul class="nav nav-pills">
-                                <li id="cloud-btn-refresh"><a href="#" onclick="tib.vis.activeVis.draw()">Refresh</a></li>
-                                <li class="dropdown">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                        Font
-                                        <b class="caret"></b>
-                                    </a>
-                                    <ul class="dropdown-menu" id="cloud-menu-text"></ul>
-                                </li>
-                                <li class="dropdown">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                        Layout
-                                        <b class="caret"></b>
-                                    </a>
-                                    <ul class="dropdown-menu" id="cloud-menu-layout"></ul>
-                                </li>
-                                <li class="dropdown">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                        Share
-                                        <b class="caret"></b>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li class="nav-header">Download</li>
-                                        <li><a href="#" onclick="tib.vis.activeVis.downloadPNG()">PNG</a></li>
-                                        <li><a href="#" onclick="tib.vis.activeVis.downloadSVG()">SVG</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="#">What am I looking at?</a></li>
-                            </ul>
-                        </div>
-                        <div id="vis-cloud" style="height: 490px; width: 900px; margin: 0 auto;"></div>
-                    </div>
-                    <div id="storywheel" style="display:none">
-                        <div id="menu-sw">
-                            <ul class="nav nav-pills">
-                                <li class="dropdown">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                        Share
-                                        <b class="caret"></b>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li class="nav-header">Download</li>
-                                        <li><a href="#" onclick="tib.vis.activeVis.downloadPNG()">PNG</a></li>
-                                        <li><a href="#" onclick="tib.vis.activeVis.downloadSVG()">SVG</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="#">What am I looking at?</a></li>
-                            </ul>
-                        </div>
-                        <div id="vis-sw" style="height: 900px; width: 900px; margin: 0 auto;"></div>
-                    </div>
+                <div id="vis-container" class="span12" style="display:none; border: 1px solid #ccc;">
+                        <ul class="nav nav-pills" id="vis-menu">
+{#                            <li id="cloud-btn-refresh"><a href="#" onclick="tib.vis.activeVis.draw()">Refresh</a></li>#}
+{#                            <li class="dropdown">#}
+{#                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">#}
+{#                                    Font#}
+{#                                    <b class="caret"></b>#}
+{#                                </a>#}
+{#                                <ul class="dropdown-menu" id="cloud-menu-text"></ul>#}
+{#                            </li>#}
+{#                            <li class="dropdown">#}
+{#                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">#}
+{#                                    Layout#}
+{#                                    <b class="caret"></b>#}
+{#                                </a>#}
+{#                                <ul class="dropdown-menu" id="cloud-menu-layout"></ul>#}
+{#                            </li>#}
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    Share
+                                    <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="nav-header">Download</li>
+                                    <li><a href="#" onclick="tib.vis.activeVis.downloadPNG()">PNG</a></li>
+                                    <li><a href="#" onclick="tib.vis.activeVis.downloadSVG()">SVG</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">What am I looking at?</a></li>
+                        </ul>
+                    <div id="vis-canvas" style="margin: 0 auto;"></div>
                 </div>
             </div>
         </div>
@@ -95,6 +90,8 @@
     <script src="{{ STATIC_URL }}js/util.js"></script>
     <script>
         $(document).ready(function() {
+
+
             var executeAjax = function() {
                 $.ajax({
                     url: '/result/{{ id }}/',
@@ -107,11 +104,15 @@
                             setTimeout(executeAjax, 5000);
                         } else {
                             // Project has run, time to get visual!
-                            $('#progress').hide();
-                            $('#vis-types').show();
-                            $('#vis-container').css('border', '1px solid #ccc');
-                            tib.vis.init(data);
-                            tib.vis.activeVis.initMenu();
+                            // Register visualisations
+                            tib.vis.registerVis('cloud', new tib.vis.ConceptCloud({
+                                width: 900,
+                                height: 490,
+                                padding: 0
+                            }, data));
+                            // Set active vis
+                            tib.vis.activate('cloud');
+                            $('#progress, #slides, #vis-container, #vis-types, #vis-container').toggle();
                         }
                     },
                     error: function(data) {
