@@ -39,29 +39,15 @@
             <div class="row">
                 <div class="span12">
                     <ul id="vis-types" class="nav nav-pills" style="display:none">
-                        <li class="cloud active"><a href="#" onclick="tib.vis.activate('cloud');return false;">Concept Cloud</a></li>
-                        <li class="web"><a href="#" onclick="tib.vis.activate('cloud');return false;">Concept Web</a></li>
+                        <li class="cloud active"><a href="#" onclick="tib.vis.activate('cloud', this);return false;">Concept Cloud</a></li>
+                        <li class="web"><a href="#" onclick="tib.vis.activate('cloud', this);return false;">Concept Web</a></li>
+{#                        <li class="sw"><a href="#" onclick="tib.vis.activate('sw', this);return false;">Story Wheel</a></li>#}
                     </ul>
                 </div>
             </div>
             <div class="row">
                 <div id="vis-container" class="span12" style="display:none; border: 1px solid #ccc;">
                         <ul class="nav nav-pills" id="vis-menu">
-{#                            <li id="cloud-btn-refresh"><a href="#" onclick="tib.vis.activeVis.draw()">Refresh</a></li>#}
-{#                            <li class="dropdown">#}
-{#                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">#}
-{#                                    Font#}
-{#                                    <b class="caret"></b>#}
-{#                                </a>#}
-{#                                <ul class="dropdown-menu" id="cloud-menu-text"></ul>#}
-{#                            </li>#}
-{#                            <li class="dropdown">#}
-{#                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">#}
-{#                                    Layout#}
-{#                                    <b class="caret"></b>#}
-{#                                </a>#}
-{#                                <ul class="dropdown-menu" id="cloud-menu-layout"></ul>#}
-{#                            </li>#}
                             <li class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                     Share
@@ -86,6 +72,7 @@
     <script src="{{ STATIC_URL }}js/d3.layout.cloud.js"></script>
     <script src="{{ STATIC_URL }}js/vis.js"></script>
     <script src="{{ STATIC_URL }}js/cloud.js"></script>
+    <script src="{{ STATIC_URL }}js/story_wheel.js"></script>
     <script src="{{ STATIC_URL }}js/uic.js"></script>
     <script src="{{ STATIC_URL }}js/util.js"></script>
     <script>
@@ -110,9 +97,18 @@
                                 height: 490,
                                 padding: 0
                             }, data));
+{#                            tib.vis.registerVis('sw', new tib.vis.StoryWheel({#}
+{#                                width: 1100,#}
+{#                                height: 1100#}
+{#                            }, data));#}
                             // Set active vis
                             tib.vis.activate('cloud');
-                            $('#progress, #slides, #vis-container, #vis-types, #vis-container').toggle();
+                            var show = function() {
+                                $('#progress, #slides').fadeOut('slow', function() {
+                                    $('#vis-container, #vis-types').show();
+                                });
+                            }
+                            setTimeout(show, 1000);
                         }
                     },
                     error: function(data) {

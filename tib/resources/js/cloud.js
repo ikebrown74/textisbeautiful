@@ -1,7 +1,3 @@
-/**
- * Cloud visualisation.
- */
-
 /// IN PROGRESS
 ///////////////////
 /// TODO
@@ -12,10 +8,12 @@
 //// - Word limit
 //////////////////
 
-tib.vis.registerVis()
-
 /**
  * Encapsulates the Concept Cloud visualisation.
+ *
+ * @param {Object} config Config options for this class. Requires height and width
+ * @param {Object} data The JSON returned by the server.
+ * @constructor
  */
 tib.vis.ConceptCloud = function ConceptCloud (config, data) {
 
@@ -36,7 +34,6 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     this.fontSize = d3.scale.pow().range([8, 160]);
     this.mode = 'Archimedean';
     this.orientation = orientations['Horizontal'];
-    this.webMode = null;
     this.words = [];
     // Default component IDs
     this.drawTarget = "vis-canvas";
@@ -44,13 +41,15 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
 
     $.extend(this, config);
 
+    this.webMode = false;
+    this.rendered = false;
     this.layout = null;
     var self = this;
 
     /*
      * Create the data structures need for this vis from the JSON the server returned.
      */
-    var loadData = function(data) {
+    var initData = function(data) {
         var cluster = {};
         var mst = [];
         var words = [];
@@ -105,7 +104,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             wordsForName: wordsForName
         };
     };
-    $.extend(this, loadData(data));
+    $.extend(this, initData(data));
     this.fontSize.domain(this.sizeDomain);
 
     /**
@@ -316,7 +315,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
 
         /* Build the menu - last has to come first to preserve the share button */
         // Layout selection
-        $(menuContainer).prepend('<li class="dropdown" id="cloud-menu-layout"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Layout<b class="caret"></b></a><ul class="dropdown-menu" id="cloud-menu-layout"></ul></li>');
+        $(menuContainer).prepend('<li class="dropdown" id="cloud-menu-layout"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Layout<b class="caret"></b></a><ul class="dropdown-menu"></ul></li>');
         var layoutMenu = $('#cloud-menu-layout ul');
         // Mode options
         layoutMenu.append($('<li class="nav-header">Cloud Shape</li>'));
@@ -353,8 +352,8 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         });
 
         // Font selection
-        $(menuContainer).prepend('<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Font<b class="caret"></b></a><ul class="dropdown-menu" id="cloud-menu-text"></ul></li>');
-        var fontMenu = $('ul#cloud-menu-text');
+        $(menuContainer).prepend('<li class="dropdown" id="cloud-menu-font"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Font<b class="caret"></b></a><ul class="dropdown-menu"></ul></li>');
+        var fontMenu = $('#cloud-menu-font ul');
         // Style options
         fontMenu.append($('<li class="nav-header">Style</li>'));
         $('<li class="style"><a href="#" style="font-weight:bold">Bold</a></li>').appendTo(fontMenu)
@@ -398,21 +397,38 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             });
     };
 
+    /**
+     * Activate this visualisation. The vis is special because it is actually 2 in one.
+     * If this vis hasn't been rendered before, we have to draw for the
+     * first time. Otherwise, we are switching between web and cloud mode.
+     */
     this.activate = function() {
-        if (self.webMode === null) {
+        if (self.rendered === false) {
             $('#' + self.drawTarget).css('width', String(self.width) + 'px');
             self.initMenu();
             self.draw();
-            self.webMode = false;
-        } else if (self.webMode === false) {
-            $('#vis-types li').removeClass('active');
-            $('#vis-types li.web').addClass('active');
-            self.toggleWeb();
+            self.rendered = true;
+            if (self.webMode === true) {
+                // This was previously in web mode so we need to call toggle.
+                self.webMode = false;
+                // Toggle inverts the value of webMode so we need to set it to false
+                self.toggleWeb();
+            }
         } else {
-            $('#vis-types li').removeClass('active');
-            $('#vis-types li.cloud').addClass('active');
             self.toggleWeb();
         }
+    };
+
+    /**
+     * Tear down this vis. Remove the SVG element and the menus we added. Set webMode to null.
+     */
+    this.destroy = function() {
+        // Remove SVG
+        $("#" + self.drawTarget + " svg").remove();
+        // Remove Menu items
+        $("li[id^='cloud-menu-']").remove();
+        // Clear state
+        self.rendered = false;
     };
 
     return this;
