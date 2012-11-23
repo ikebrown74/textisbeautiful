@@ -39,29 +39,14 @@
             <div class="row">
                 <div class="span12">
                     <ul id="vis-types" class="nav nav-pills" style="display:none">
-                        <li class="cloud active"><a href="#" onclick="tib.vis.activate('cloud');return false;">Concept Cloud</a></li>
-                        <li class="web"><a href="#" onclick="tib.vis.activate('cloud');return false;">Concept Web</a></li>
+                        <li class="cloud active"><a href="#" onclick="tib.vis.Manager.draw('ConceptCloud', {webMode:false});return false;">Concept Cloud</a></li>
+                        <li class="web"><a href="#" onclick="tib.vis.Manager.draw('ConceptCloud', {webMode:true});return false;">Concept Web</a></li>
                     </ul>
                 </div>
             </div>
             <div class="row">
                 <div id="vis-container" class="span12" style="display:none; border: 1px solid #ccc;">
                         <ul class="nav nav-pills" id="vis-menu">
-{#                            <li id="cloud-btn-refresh"><a href="#" onclick="tib.vis.activeVis.draw()">Refresh</a></li>#}
-{#                            <li class="dropdown">#}
-{#                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">#}
-{#                                    Font#}
-{#                                    <b class="caret"></b>#}
-{#                                </a>#}
-{#                                <ul class="dropdown-menu" id="cloud-menu-text"></ul>#}
-{#                            </li>#}
-{#                            <li class="dropdown">#}
-{#                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">#}
-{#                                    Layout#}
-{#                                    <b class="caret"></b>#}
-{#                                </a>#}
-{#                                <ul class="dropdown-menu" id="cloud-menu-layout"></ul>#}
-{#                            </li>#}
                             <li class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                     Share
@@ -69,8 +54,8 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li class="nav-header">Download</li>
-                                    <li><a href="#" onclick="tib.vis.activeVis.downloadPNG()">PNG</a></li>
-                                    <li><a href="#" onclick="tib.vis.activeVis.downloadSVG()">SVG</a></li>
+                                    <li><a href="#" onclick="tib.vis.Manager.shareVis('PNG')">PNG</a></li>
+                                    <li><a href="#" onclick="tib.vis.Manager.shareVis('SVG')">SVG</a></li>
                                 </ul>
                             </li>
                             <li><a href="#">What am I looking at?</a></li>
@@ -103,15 +88,16 @@
                         if (data['completed'] === false) {
                             setTimeout(executeAjax, 5000);
                         } else {
+                            tib.vis.Manager.setData(data);
                             // Project has run, time to get visual!
                             // Register visualisations
-                            tib.vis.registerVis('cloud', new tib.vis.ConceptCloud({
+                            tib.vis.Manager.registerVis('ConceptCloud', {
                                 width: 900,
                                 height: 490,
                                 padding: 0
-                            }, data));
-                            // Set active vis
-                            tib.vis.activate('cloud');
+                            });
+                            // Draw primary vis
+                            tib.vis.Manager.draw('ConceptCloud', {webMode:false});
                             $('#progress, #slides, #vis-container, #vis-types, #vis-container').toggle();
                         }
                     },
