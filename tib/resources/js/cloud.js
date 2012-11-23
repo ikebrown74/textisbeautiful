@@ -379,7 +379,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             listEl.click(function(e) {
                 e.preventDefault();
                 self.selectFont(font);
-                $('ul#cloud-menu-text li.font').removeClass('active');
+                $('#cloud-menu-font ul li.font').removeClass('active');
                 listEl.addClass('active');
             });
             // Make sure the current font is set as active.
