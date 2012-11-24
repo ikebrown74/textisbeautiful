@@ -81,13 +81,11 @@ tib.vis.Manager = function () {
         shareVis: function (exportType) {
             switch (exportType.toUpperCase()) {
                 case 'PNG':
-                    window.open(currentVis.asPNG());
+                    currentVis.downloadPNG();
                     break;
                 case 'SVG':
                     tib.util.downloadSVG(drawTarget);
                     break;
-                case 'TWT':
-                    tib.util.tweet(currentVis.asPNG())
             }
         }
     }

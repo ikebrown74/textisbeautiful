@@ -24,7 +24,7 @@ STATUS_MAP = {
     'REMOVE_LOW_FREQ': 33,
     'INDEX': 44,
     'FINDSEEDS': 55,
-    'LEARN': 665,
+    'LEARN': 66,
     'CLASSIFY': 78,
     'CLUSTER': 90,
 }
@@ -35,7 +35,6 @@ def get_project_folder():
 
     Returns the lex object (as returned by lexrestclient) representing the project folder.
     """
-    current_minute = "{0}".format(int(math.floor(time.time() / 60)))
     start = lex.LexObject.from_url(settings.LEX_URL, auth=settings.LEX_AUTH)
 
     if isinstance(start, lex.Instance):
@@ -56,17 +55,10 @@ def get_project_folder():
         else:
             raise ResourceError('Couldn\'t find the top level project folder "{0}".'.format(settings.TOP_PROJECT_FOLDER))
 
-        if user_folder is not None:
-            if hasattr(user_folder, 'project_folder'):
-                for f in user_folder.project_folder:
-                    pf = lex.LexObject.from_url(f.href, auth=settings.LEX_AUTH)
-                    if pf.name == current_minute:
-                        return pf
-        else:
+        if user_folder is None:
             raise ResourceError('Couldn\'t find the user project folder "{0}".'.format(settings.LEX_AUTH[0]))
 
-        return user_folder.create_project_folder(current_minute, auth=settings.LEX_AUTH)
-
+        return user_folder
 
 def get_data_folder():
     """
