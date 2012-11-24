@@ -108,23 +108,29 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     this.fontSize.domain(this.sizeDomain);
 
     /**
-     * Export cloud as image/png.
+     * Open a new window with the cloud as image/png.
      */
     this.downloadPNG = function () {
-        
+        window.open(self.asPng());
+    };
+
+    /**
+     * Generate a PNG representation of this visualisation. Uses HTML5 canvas.toDataUrl().
+     * @return {String} Data url representing he image. Base64 encoded.
+     */
+    this.asPng = function () {
         // Use canvas to generate png data
         var canvas = document.createElement("canvas"),
             c = canvas.getContext("2d");
-        var self = this;
 
         canvas.width = self.width;
         canvas.height = self.height;
         c.translate(self.width >> 1, self.height >> 1);
         c.scale(1, 1);
-        
+
 
         // Links
-        d3.selectAll('div#vis-cloud svg path').each(function (line) {
+        d3.selectAll('div#' + self.drawTarget + ' svg path').each(function (line) {
             c.strokeStyle = "#ccc";
             c.lineWidth = 1;
             c.beginPath();
@@ -133,9 +139,9 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             c.stroke();
             c.closePath();
         });
-        
+
         // Words
-        d3.selectAll("div#vis-cloud svg text").each(function (word) {
+        d3.selectAll('div#' + self.drawTarget + ' svg text').each(function (word) {
             c.save();
             if (self.webMode) {
                 c.translate(self.cluster[word.text].x, self.cluster[word.text].y);
@@ -151,8 +157,8 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             c.fillText(word.text, 0, 0);
             c.restore();
         });
-        
-        window.open(canvas.toDataURL("image/png"));
+
+        return canvas.toDataURL("image/png");
     };
     
     /**
@@ -325,7 +331,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             listEl.click(function(e) {
                 e.preventDefault();
                 self.selectMode(mode);
-                $('ul#cloud-menu-layout li.mode').removeClass('active');
+                $('#cloud-menu-layout li.mode').removeClass('active');
                 listEl.addClass('active');
             });
             if (mode == self.mode) {
@@ -341,7 +347,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             listEl.click(function(e) {
                 e.preventDefault();
                 self.selectOrientation(key);
-                $('ul#cloud-menu-layout li.orientation').removeClass('active');
+                $('#cloud-menu-layout li.orientation').removeClass('active');
                 listEl.addClass('active');
             });
 
