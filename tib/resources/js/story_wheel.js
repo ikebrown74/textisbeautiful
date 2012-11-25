@@ -85,12 +85,29 @@ tib.vis.StoryWheel = function StoryWheel(config, data) {
         };
     };
     $.extend(this, initData(data));
+    
+    /**
+     * Export story wheel as PNG data url.
+     */
+    this.asPNG = function () {
+        alert('Not yet implemented'); 
+    };
 
     /**
      * Draw the concept cloud visualisation.
      */
     this.draw = function () {
+        
+        $('#vis-types li').removeClass('active');
+        $('#vis-types li.story-wheel').addClass('active');
+        
+        if (!this.drawn) {
+            $('#' + self.drawTarget).css('width', String(self.width) + 'px');
+        }
+        
         generate();
+        
+        this.drawn = true;
     };
 
     // Do the actual drawing work
@@ -138,14 +155,6 @@ tib.vis.StoryWheel = function StoryWheel(config, data) {
             .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
             .attr("transform", function(d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
             .text(function(d) { return d.name; });
-    };
-
-    /**
-     * Activate this vis. All we do is resize the container and draw it.
-     */
-    this.activate = function() {
-        $('#' + self.drawTarget).css('width', String(self.width) + 'px');
-        self.draw();
     };
 
     /**

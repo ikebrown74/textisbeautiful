@@ -1,3 +1,7 @@
+/**
+ * Cloud visualisation.
+ */
+
 /// IN PROGRESS
 ///////////////////
 /// TODO
@@ -34,15 +38,11 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     this.fontSize = d3.scale.pow().range([8, 160]);
     this.mode = 'Archimedean';
     this.orientation = orientations['Horizontal'];
+    this.webMode = false;
     this.words = [];
-    // Default component IDs
-    this.drawTarget = "vis-canvas";
-    this.target = "vis-container";
 
     $.extend(this, config);
 
-    this.webMode = false;
-    this.rendered = false;
     this.layout = null;
     var self = this;
 
@@ -106,19 +106,20 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     };
     $.extend(this, initData(data));
     this.fontSize.domain(this.sizeDomain);
-
+    
     /**
-     * Open a new window with the cloud as image/png.
+     * Cleanup all traces of this visualisation.
      */
-    this.downloadPNG = function () {
-        window.open(self.asPng());
+    this.destroy = function () {
+        this.selector().remove();
+        $('#vis-menu .cloud-menu').remove();
     };
 
     /**
-     * Generate a PNG representation of this visualisation. Uses HTML5 canvas.toDataUrl().
-     * @return {String} Data url representing he image. Base64 encoded.
+     * Export the cloud/web as PNG data url.
      */
-    this.asPng = function () {
+    this.asPNG = function () {
+        
         // Use canvas to generate png data
         var canvas = document.createElement("canvas"),
             c = canvas.getContext("2d");
@@ -130,7 +131,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
 
 
         // Links
-        d3.selectAll('div#' + self.drawTarget + ' svg path').each(function (line) {
+        this.selector().selectAll('path').each(function (line) {
             c.strokeStyle = "#ccc";
             c.lineWidth = 1;
             c.beginPath();
@@ -139,9 +140,9 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             c.stroke();
             c.closePath();
         });
-
+        
         // Words
-        d3.selectAll('div#' + self.drawTarget + ' svg text').each(function (word) {
+        this.selector().selectAll("text").each(function (word) {
             c.save();
             if (self.webMode) {
                 c.translate(self.cluster[word.text].x, self.cluster[word.text].y);
@@ -157,15 +158,8 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             c.fillText(word.text, 0, 0);
             c.restore();
         });
-
+        
         return canvas.toDataURL("image/png");
-    };
-    
-    /**
-     * Export cloud as svg.
-     */
-    this.downloadSVG = function () {
-        tib.util.downloadSVG(self.drawTarget);
     };
 
     /**
@@ -175,15 +169,45 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
      */
     this.selectMode = function (value) {
         self.mode = value;
-        self.draw();
+        self.draw({forceRedraw: true});
     };
+    
+    /**
+     * Returns the d3 selector for this visualisation.
+     */
+    this.selector = function () {
+        return d3.select('#' + this.drawTarget + ' svg');
+    }
     
     /**
      * Draw the concept cloud visualisation.
      */
-    this.draw = function () {
-
-        generate();
+    this.draw = function (params) {
+        
+        var webModeToggled = false;
+        if (params && params.webMode != null) {
+            this.webMode = params.webMode;
+            webModeToggled = true;
+        }
+        
+        if (!this.drawn) {
+            $('#' + this.drawTarget).css('width', String(this.width) + 'px');
+            this.initMenu();
+        }
+        
+        if (webModeToggled && this.drawn) {
+            // Toggle between web and cloud mode
+            this.doWebTransform();
+        }
+        else if (!this.drawn || params.forceRedraw) {
+            // Draw
+            generate();
+            this.drawn = true;
+        }
+        
+        if (webModeToggled) {
+            this.updateMenu();
+        }
     };
     
     /**
@@ -193,18 +217,13 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     this.selectFont = function (font) {
         if (font != this.font) {
             this.font = font;
-            if (this.webMode) {
-                d3.selectAll('div#' + self.drawTarget + ' svg text').style('font-family', font);
-            }
-            else {
-                this.draw();    
-            }
+            this.draw({forceRedraw: true});    
         }
     };
 
     this.selectOrientation = function(orientation) {
         self.orientation = orientations[orientation];
-        self.draw();
+        self.draw({forceRedraw: true});
     };
     
     /**
@@ -217,12 +236,12 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         if (name == 'bold' || name == 'italic') {
             this[name] = !this[name];
             if (this.webMode) {
-                d3.selectAll('div#' + self.drawTarget + ' svg text')
-                    .style("font-style", self.italic ? 'italic' : 'normal')
-                    .style("font-weight", self.bold ? 'bold' : 'normal')
+                this.selector().selectAll('text')
+                    .style("font-style", this.italic ? 'italic' : 'normal')
+                    .style("font-weight", this.bold ? 'bold' : 'normal')
             }
             else {
-                this.draw();    
+                this.draw({forceRedraw: true});    
             }
         }
     };
@@ -230,20 +249,11 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     /**
      * Toggle concept web visualisation mode.
      */
-    this.toggleWeb = function () {
-        self.webMode = !self.webMode;
-        if (self.webMode === true) {
-            $('#cloud-menu-layout').hide();
-            $('#cloud-menu-refresh').hide();
-        }
-        else {
-            $('#cloud-menu-layout').show();
-            $('#cloud-menu-refresh').show();
-        }
+    this.doWebTransform = function () {
         
         drawSpanningTreeLinks();
             
-        d3.selectAll('div#' + self.drawTarget + ' svg text').transition()
+        this.selector().selectAll('text').transition()
             .duration(750)
             .style("font-size", function(d) { return (self.webMode ? getFontSizeForWeb(d.size) : d.size) + "px"; })
             .attr("transform", function(d) {
@@ -255,10 +265,9 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     
     // Draw the links for the MST.
     var drawSpanningTreeLinks = function () {
-        d3.selectAll('div#' + self.drawTarget + ' svg path').remove();
+        self.selector().selectAll('path').remove();
         if (self.webMode === true) {
-            d3.select('div#' + self.drawTarget + ' svg').selectAll("path")
-                .data(self.mst)
+            self.selector().selectAll('path').data(self.mst)
                 .enter().insert("path", ":first-child")
                 .attr("d", function (d) { return "M " + d.x1 + ", " + d.y1 + " L" + d.x2 + ", " + d.y2})
                 .attr("transform", "translate(" + self.width/2 + "," + self.height/2 + ")")
@@ -290,6 +299,11 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
                             return "translate(" + [self.webMode ? self.cluster[d.text].x : d.x, self.webMode ? self.cluster[d.text].y : d.y] + ")rotate(" + (self.webMode ? 0 : d.rotate) + ")";
                         })
                         .text(function(d) { return d.text; });
+                        
+        if (self.webMode) {
+            self.selector().selectAll('text').style("font-size", function(d) { return getFontSizeForWeb(d.size) + "px"; })
+            drawSpanningTreeLinks();
+        }
     };
     
     // Start the D3 drawing process
@@ -321,7 +335,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
 
         /* Build the menu - last has to come first to preserve the share button */
         // Layout selection
-        $(menuContainer).prepend('<li class="dropdown" id="cloud-menu-layout"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Layout<b class="caret"></b></a><ul class="dropdown-menu"></ul></li>');
+        $(menuContainer).prepend('<li class="cloud-menu dropdown" id="cloud-menu-layout"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Layout<b class="caret"></b></a><ul class="dropdown-menu" id="cloud-menu-layout"></ul></li>');
         var layoutMenu = $('#cloud-menu-layout ul');
         // Mode options
         layoutMenu.append($('<li class="nav-header">Cloud Shape</li>'));
@@ -331,7 +345,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             listEl.click(function(e) {
                 e.preventDefault();
                 self.selectMode(mode);
-                $('#cloud-menu-layout li.mode').removeClass('active');
+                $('ul#cloud-menu-layout li.mode').removeClass('active');
                 listEl.addClass('active');
             });
             if (mode == self.mode) {
@@ -347,7 +361,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             listEl.click(function(e) {
                 e.preventDefault();
                 self.selectOrientation(key);
-                $('#cloud-menu-layout li.orientation').removeClass('active');
+                $('ul#cloud-menu-layout li.orientation').removeClass('active');
                 listEl.addClass('active');
             });
 
@@ -358,8 +372,8 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         });
 
         // Font selection
-        $(menuContainer).prepend('<li class="dropdown" id="cloud-menu-font"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Font<b class="caret"></b></a><ul class="dropdown-menu"></ul></li>');
-        var fontMenu = $('#cloud-menu-font ul');
+        $(menuContainer).prepend('<li class="cloud-menu dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Font<b class="caret"></b></a><ul class="dropdown-menu" id="cloud-menu-text"></ul></li>');
+        var fontMenu = $('ul#cloud-menu-text');
         // Style options
         fontMenu.append($('<li class="nav-header">Style</li>'));
         $('<li class="style"><a href="#" style="font-weight:bold">Bold</a></li>').appendTo(fontMenu)
@@ -385,7 +399,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             listEl.click(function(e) {
                 e.preventDefault();
                 self.selectFont(font);
-                $('#cloud-menu-font ul li.font').removeClass('active');
+                $('ul#cloud-menu-text li.font').removeClass('active');
                 listEl.addClass('active');
             });
             // Make sure the current font is set as active.
@@ -396,46 +410,28 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         });
 
         // Refresh button
-        $('<li id="cloud-menu-refresh"><a href="#">Refresh</a></li>').prependTo(menuContainer)
+        $('<li class="cloud-menu" id="cloud-menu-refresh"><a href="#">Refresh</a></li>').prependTo(menuContainer)
             .click(function(e) {
                 e.preventDefault();
-                self.draw();
+                self.draw({forceRedraw: true});
             });
     };
-
-    /**
-     * Activate this visualisation. The vis is special because it is actually 2 in one.
-     * If this vis hasn't been rendered before, we have to draw for the
-     * first time. Otherwise, we are switching between web and cloud mode.
-     */
-    this.activate = function() {
-        if (self.rendered === false) {
-            $('#' + self.drawTarget).css('width', String(self.width) + 'px');
-            self.initMenu();
-            self.draw();
-            self.rendered = true;
-            if (self.webMode === true) {
-                // This was previously in web mode so we need to call toggle.
-                self.webMode = false;
-                // Toggle inverts the value of webMode so we need to set it to false
-                self.toggleWeb();
-            }
-        } else {
-            self.toggleWeb();
+    
+    // Update the menus based on web or cloud mode
+    this.updateMenu = function () {
+        $('#vis-types li').removeClass('active');
+        if (this.webMode === true) {
+            $('#cloud-menu-layout').hide();
+            $('#cloud-menu-refresh').hide();
+            $('#vis-types li.web').addClass('active');
+            
         }
-    };
-
-    /**
-     * Tear down this vis. Remove the SVG element and the menus we added. Set webMode to null.
-     */
-    this.destroy = function() {
-        // Remove SVG
-        $("#" + self.drawTarget + " svg").remove();
-        // Remove Menu items
-        $("li[id^='cloud-menu-']").remove();
-        // Clear state
-        self.rendered = false;
-    };
+        else {
+            $('#cloud-menu-layout').show();
+            $('#cloud-menu-refresh').show();
+            $('#vis-types li.cloud').addClass('active');
+        }
+    }
 
     return this;
 };
