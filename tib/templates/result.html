@@ -41,7 +41,7 @@
                     <ul id="vis-types" class="nav nav-pills" style="display:none">
                         <li class="cloud active"><a href="#" onclick="tib.vis.Manager.draw('ConceptCloud', {webMode:false});return false;">Concept Cloud</a></li>
                         <li class="web"><a href="#" onclick="tib.vis.Manager.draw('ConceptCloud', {webMode:true});return false;">Concept Web</a></li>
-                        <li class="story-wheel"><a href="#" onclick="tib.vis.Manager.draw('StoryWheel', {});return false;">Story Wheel</a></li>
+{#                        <li class="story-wheel"><a href="#" onclick="tib.vis.Manager.draw('StoryWheel', {});return false;">Story Wheel</a></li>#}
                     </ul>
                     <div id="alert-share-load" class="alert alert-info" style="display: none;">
                         <strong>Attention!</strong> We are creating a URL for your visualisation now... <img src="{{ STATIC_URL }}img/ajax-loader.gif" />
@@ -116,11 +116,10 @@
                             });
                             // Draw primary vis
                             tib.vis.Manager.draw('ConceptCloud', {webMode:false});
-                            $('#progress, #slides, #vis-container, #vis-types, #vis-container').toggle();
-                            tib.vis.Manager.registerVis('StoryWheel', {
-                                width: 1100,
-                                height: 1100
-                            });
+{#                            tib.vis.Manager.registerVis('StoryWheel', {#}
+{#                                width: 1100,#}
+{#                                height: 1100#}
+{#                            });#}
                             // Set active vis
                             var show = function() {
                                 $('#progress, #slides').fadeOut('slow', function() {
