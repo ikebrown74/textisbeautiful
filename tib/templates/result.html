@@ -82,7 +82,11 @@
     </div>
 {% endblock %}
 {% block extra_script %}
+    {% if debug %}
+    <script src="{{ STATIC_URL }}js/d3.v2.js"></script>
+    {% else %}
     <script src="{{ STATIC_URL }}js/d3.v2.min.js"></script>
+    {% endif %}
     <script src="{{ STATIC_URL }}js/d3.layout.cloud.js"></script>
     <script src="{{ STATIC_URL }}js/vis.js"></script>
     <script src="{{ STATIC_URL }}js/cloud.js"></script>
@@ -91,8 +95,6 @@
     <script src="{{ STATIC_URL }}js/util.js"></script>
     <script>
         $(document).ready(function() {
-
-
             var executeAjax = function() {
                 $.ajax({
                     url: '/result/{{ id }}/',
@@ -126,8 +128,6 @@
                                 });
                             };
                             setTimeout(show, 1000);
-                            // Store the data locally so we can use it later
-                            tib.util.data = data;
                         }
                     },
                     error: function(data) {

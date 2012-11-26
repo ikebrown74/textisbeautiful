@@ -13,7 +13,7 @@ tib.vis.Manager = function () {
     var target = "vis-container";
     
     // Current visualisation
-    var currentVis = null;
+    var currentVis = null,
         currentVisType = null;
     
     // JSON data
@@ -37,6 +37,7 @@ tib.vis.Manager = function () {
         /**
          * Draw a visualisation.
          * @param {String} type
+         * @param params
          */
         draw: function(type, params) {
             
