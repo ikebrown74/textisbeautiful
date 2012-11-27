@@ -13,7 +13,7 @@ tib.vis.Manager = function () {
     var target = "vis-container";
     
     // Current visualisation
-    var currentVis = null;
+    var currentVis = null,
         currentVisType = null;
     
     // JSON data
@@ -37,6 +37,7 @@ tib.vis.Manager = function () {
         /**
          * Draw a visualisation.
          * @param {String} type
+         * @param params
          */
         draw: function(type, params) {
             
@@ -87,7 +88,15 @@ tib.vis.Manager = function () {
                     tib.util.downloadSVG(drawTarget);
                     break;
                 case 'TWT':
-                    tib.util.tweet(currentVis.asPNG())
+                    tib.util.tweet(currentVis.asPNG());
+                    break;
+                case 'FCB':
+                    tib.util.facebook(currentVis.asPNG());
+                    break;
+                case 'GOP':
+                    tib.util.googlePlus(currentVis.asPNG());
+                    break;
+
             }
         }
     }

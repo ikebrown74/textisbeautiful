@@ -22,8 +22,10 @@ urlpatterns = patterns('',
     (r'^contact/$', TemplateView.as_view(template_name="contact.html")),
     (r'^create/$', TemplateView.as_view(template_name="create.html")),
     (r'^faq/$', TemplateView.as_view(template_name="faq.html")),
+    (r'^fb_close/$', TemplateView.as_view(template_name="fb_close.html")),
 
     # Dynamic views
+    url(r'^contact/send/$', 'tib.views.contact_email'),
     url(r'^result/$', 'tib.views.result'),
     url (r'^result/([\w=-]+)/?$', 'tib.views.status'),
 )
