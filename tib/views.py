@@ -2,12 +2,15 @@ import base64
 import hashlib
 import json
 import os
+import smtplib
 import urllib
 from django.conf import settings
+from django.core.mail import mail_admins
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
 from django.shortcuts import render
 import time
 from tib import utils
+from tib.forms import ContactForm
 
 def result(request):
     """
@@ -60,3 +63,33 @@ def status(request, id):
             return HttpResponseServerError("Leximancer project failed to run - {0}".format(result[2]))
         else:
             return HttpResponse(json.dumps({"message": "Running stage {0}: {1}".format(result[0], result[2]), 'progress': utils.STATUS_MAP[result[0]], 'completed': False}), content_type='text/json')
+
+def contact_email(request):
+    """
+    Send email to the site admins
+    """
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            email = form.cleaned_data['email']
+            name = form.cleaned_data['name']
+            try:
+                mail_admins(subject, 'From: {0}\nEmail: {1}\nMessage:\n\n{2}'.format(name, email, message))
+                return render(request, "contact.html", {
+                    "email_attempt": True,
+                    "email_failed": False
+                })
+            except smtplib.SMTPException:
+                return render(request, "contact.html", {
+                    "email_attempt": True,
+                    "email_failed": True,
+                    "message": '(err: sending failed)'
+                })
+        else:
+            return render(request, "contact.html", {
+                "email_attempt": True,
+                "email_failed": True,
+                "message": '(err: form validation)'
+            })
