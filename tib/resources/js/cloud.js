@@ -20,6 +20,8 @@
  * @constructor
  */
 tib.vis.ConceptCloud = function ConceptCloud (config, data) {
+    
+    var INACTIVE_THEME_COLOUR = '#bbb';
 
     var orientations = {
         'Messy' : [5, 30, 60],
@@ -37,7 +39,10 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     this.font = 'Trebuchet MS';
     this.fontSize = d3.scale.pow().range([8, 160]);
     this.mode = 'Archimedean';
+    this.numThemes = 8;
     this.orientation = orientations['Horizontal'];
+    this.colourStyle = 'Basic';
+    this.themeColouring = true;
     this.webMode = false;
     this.words = [];
 
@@ -50,20 +55,24 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
      * Create the data structures need for this vis from the JSON the server returned.
      */
     var initData = function(data) {
+        
         var cluster = {};
-        var mst = [];
         var words = [];
         var wordsForName = {};
         var wordNamesForId = {};
         var minSize = null;
         var maxSize = null;
         for (var id in data.markers.concepts) {
+            
             var w = data.markers.concepts[id];
             words.push(word = {
                 edges: w.mstEdges,
                 size: parseInt(w.weight, 10),
-                text: w.value
+                text: w.value,
+                themeId: w.themeId,
+                themeConnectivity: data.markers.themes[w.themeId].connectivity
             });
+            
             if (minSize == null) {
                 minSize = maxSize = word.size;
             }
@@ -71,18 +80,23 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
                 minSize = Math.min(minSize, word.size);
                 maxSize = Math.max(maxSize, word.size)
             }
+            
+            // Cluster positioning
             cluster[word.text] = {
                 x: w.x * self.width/2,
                 y: w.y * self.height/2
             };
+            
+            // Helper data structures
             wordNamesForId[w.id] = w.value;
             wordsForName[word.text] = word;
         }
 
-        // Sort words by size, decreasing
-        words.sort(function (a, b) { return b.size - a.size;});
+        // Sort words by theme
+        words.sort(function (a, b) { return b.themeConnectivity - a.themeConnectivity;});
 
         // Normalise text size and build mst
+        var mst = [];
         for (var i = 0; i < words.length; i++) {
             var word = words[i];
             for (var j = 0; j < word.edges.length; j++) {
@@ -100,6 +114,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             cluster: cluster,
             mst: mst,
             sizeDomain: [minSize, maxSize],
+            themes: data.markers.themes,
             words: words,
             wordsForName: wordsForName
         };
@@ -154,7 +169,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             }
             c.rotate(word.rotate * Math.PI / 180);
             c.textAlign = "center";
-            c.fillStyle = word.fill;
+            c.fillStyle = getColourForWord(word.text);
             c.fillText(word.text, 0, 0);
             c.restore();
         });
@@ -293,7 +308,6 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
                         .style("font-family", self.font)
                         .style("font-style", self.italic ? 'italic' : 'normal')
                         .style("font-weight", self.bold ? 'bold' : 'normal')
-                        .style("fill", function(d, i) { d.fill = self.fill(i); return d.fill; })
                         .attr("text-anchor", "middle")
                         .attr("transform", function(d) {
                             return "translate(" + [self.webMode ? self.cluster[d.text].x : d.x, self.webMode ? self.cluster[d.text].y : d.y] + ")rotate(" + (self.webMode ? 0 : d.rotate) + ")";
@@ -304,6 +318,8 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             self.selector().selectAll('text').style("font-size", function(d) { return getFontSizeForWeb(d.size) + "px"; })
             drawSpanningTreeLinks();
         }
+        
+        updateColours();
     };
     
     // Start the D3 drawing process
@@ -320,9 +336,43 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             .start();
     };
     
+    var getColourForWord = function (text) {
+        if (self.themeColouring) {
+            return self.themeColours[self.wordsForName[text].themeId];
+        }
+        return self.colours(text);
+    };
+    
     // Determine font size for web mode
     var getFontSizeForWeb = function (originalSize) {
         return 2 + 3 * Math.sqrt(originalSize);
+    };
+    
+    // Update colours
+    var updateColours = function () {
+        
+        if (self.themeColouring) {
+            // Themes
+            var colours = tib.uic.COLOURS.categorical[self.colourStyle];
+            self.themeColours = {};
+            var themeCount = 0;
+            for (id in self.themes) {
+    
+                // Truncate colourisation of themes by connectivity
+                if (themeCount <= self.numThemes && themeCount < colours.length) {
+                    self.themeColours[id] = colours[themeCount];
+                }
+                else {
+                    self.themeColours[id] = INACTIVE_THEME_COLOUR;
+                }
+                themeCount = themeCount + 1;
+            }
+        }
+        else {
+            self.colours = tib.uic.COLOURS.random[self.colourStyle];
+        }
+        
+        self.selector().selectAll('text').style("fill", function(d) { return getColourForWord(d.text); })
     };
 
     /**
@@ -334,6 +384,48 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         var menuContainer = $('#vis-menu');
 
         /* Build the menu - last has to come first to preserve the share button */
+        // Colour selection
+        $(menuContainer).prepend('<li class="cloud-menu dropdown" id="cloud-menu-colours"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Colours<b class="caret"></b></a><ul class="dropdown-menu"></ul></li>');
+        var coloursMenu = $('#cloud-menu-colours ul');
+        // Thematic colouring
+        coloursMenu.append($('<li class="nav-header">By Theme</li>'));
+        $.each(tib.uic.COLOURS.categorical, function (key, value) {
+            var listEl = $('<li class="colour"><a href="#">' + key + '</a></li>');
+            // Click handler
+            listEl.click(function(e) {
+                e.preventDefault();
+                self.themeColouring = true;
+                self.colourStyle = key;
+                updateColours();
+                $('#cloud-menu-colours li.colour').removeClass('active');
+                listEl.addClass('active');
+            });
+
+            if (self.themeColouring && key == self.colourStyle) {
+                listEl.addClass('active')
+            }
+            coloursMenu.append(listEl);
+        });
+        // Random colouring
+        coloursMenu.append($('<li class="nav-header">Random</li>'));
+        $.each(tib.uic.COLOURS.random, function (key, value) {
+            var listEl = $('<li class="colour"><a href="#">' + key + '</a></li>');
+            // Click handler
+            listEl.click(function(e) {
+                e.preventDefault();
+                self.themeColouring = false;
+                self.colourStyle = key;
+                updateColours();
+                $('#cloud-menu-colours li.colour').removeClass('active');
+                listEl.addClass('active');
+            });
+
+            if (!self.themeColouring && key == self.colourStyle) {
+                listEl.addClass('active')
+            }
+            coloursMenu.append(listEl);
+        });
+        
         // Layout selection
         $(menuContainer).prepend('<li class="cloud-menu dropdown" id="cloud-menu-layout"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Layout<b class="caret"></b></a><ul class="dropdown-menu" id="cloud-menu-layout"></ul></li>');
         var layoutMenu = $('#cloud-menu-layout ul');
