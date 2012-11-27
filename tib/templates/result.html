@@ -44,7 +44,7 @@
 {#                        <li class="story-wheel"><a href="#" onclick="tib.vis.Manager.draw('StoryWheel', {});return false;">Story Wheel</a></li>#}
                     </ul>
                     <div id="alert-share-load" class="alert alert-info" style="display: none;">
-                        <strong>Attention!</strong> We are creating a URL for your visualisation now. You will need to enable pop-ups for this to work properly. <img src="{{ STATIC_URL }}img/ajax-loader.gif" />
+                        <strong>Attention!</strong> We are creating a URL for your visualisation now... <img src="{{ STATIC_URL }}img/ajax-loader.gif" />
                     </div>
                     <div id="alert-share-error" class="alert alert-error fade in" style="display: none;">
                         <button type="button" class="close" data-dismiss="alert">×</button>
@@ -53,7 +53,7 @@
                     </div>
                     <div id="alert-share-success" class="alert alert-success fade in" style="display: none;">
                         <button type="button" class="close" data-dismiss="alert">×</button>
-                        <strong>WHOOP!</strong> The url for your visualisation was created! Thanks <a href="http://imgur.com" target="_blank">Imgur</a>!
+                        <strong>WHOOP!</strong> The url for your visualisation was created! Thanks <a href="http://imgur.com" target="_blank">Imgur</a>! You should see a pop-up window shortly. If not, enable pop-ups!
                     </div>
                 </div>
             </div>
@@ -67,6 +67,7 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li class="nav-header">Social</li>
+                                    <li><a href="#" onclick="tib.vis.Manager.shareVis('FCB');return false;"><i class="icon-facebook"></i>Facebook</a></li>
                                     <li><a href="#" onclick="tib.vis.Manager.shareVis('TWT');return false;"><i class="icon-twitter"></i>Twitter</a></li>
                                     <li class="nav-header">Download</li>
                                     <li><a href="#" onclick="tib.vis.Manager.shareVis('PNG')">PNG</a></li>
@@ -82,6 +83,25 @@
     </div>
 {% endblock %}
 {% block extra_script %}
+    <script>
+        window.fbAsyncInit = function() {
+            // init the FB JS SDK
+            FB.init({
+                appId: '516198008405334',
+                logging: false,
+                authResponse: false
+            });
+        };
+
+        // Load the Facebook SDK's source Asynchronously
+        (function(d, debug){
+            var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement('script'); js.id = id; js.async = true;
+            js.src = "//connect.facebook.net/en_US/all" + (debug ? "/debug" : "") + ".js";
+            ref.parentNode.insertBefore(js, ref);
+        }(document, false));
+    </script>
     {% if debug %}
     <script src="{{ STATIC_URL }}js/d3.v2.js"></script>
     {% else %}

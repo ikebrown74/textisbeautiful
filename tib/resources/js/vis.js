@@ -88,7 +88,11 @@ tib.vis.Manager = function () {
                     tib.util.downloadSVG(drawTarget);
                     break;
                 case 'TWT':
-                    tib.util.tweet(currentVis.asPNG())
+                    tib.util.tweet(currentVis.asPNG());
+                    break;
+                case 'FCB':
+                    tib.util.facebook(currentVis.asPNG());
+                    break;
             }
         }
     }
