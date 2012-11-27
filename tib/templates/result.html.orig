@@ -87,7 +87,9 @@
     </div>
 {% endblock %}
 {% block extra_script %}
+<<<<<<< HEAD
     <!-- External JS -->
+=======
     <script>
         window.fbAsyncInit = function() {
             // init the FB JS SDK
@@ -110,6 +112,7 @@
     {% if debug %}
     <script src="{{ STATIC_URL }}js/d3.v2.js"></script>
     {% else %}
+>>>>>>> 7c0dc6f9dfd60c197bea884ec38b462ce157295b
     <script src="{{ STATIC_URL }}js/d3.v2.min.js"></script>
     {% endif %}
     <script src="{{ STATIC_URL }}js/d3.layout.cloud.js"></script>
