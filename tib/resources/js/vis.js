@@ -93,6 +93,10 @@ tib.vis.Manager = function () {
                 case 'FCB':
                     tib.util.facebook(currentVis.asPNG());
                     break;
+                case 'GOP':
+                    tib.util.googlePlus(currentVis.asPNG());
+                    break;
+
             }
         }
     }

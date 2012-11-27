@@ -60,7 +60,22 @@ tib.util.tweet = function (imageData) {
 };
 
 /**
- * Send a Facebook post containing the image of this visualisation using a link to the image. Uploads the image to imgur.
+ * Share an image of this visualisation using a link to the image on Google+. Uploads the image to imgur.
+ *
+ * @param {String} imageData Base64 encode image data
+ */
+tib.util.googlePlus = function (imageData) {
+    tib.util.social(imageData, function(pic, imgur) {
+        window.open(
+            'https://plus.google.com/share?url=' + encodeURI(imgur),
+            '_blank',
+            'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600'
+        );
+    });
+};
+
+/**
+ * Share an image of this visualisation using a link to the image on Facebook. Uploads the image to imgur.
  *
  * @param {String} imageData Base64 encode image data
  */
