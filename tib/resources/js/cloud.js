@@ -192,7 +192,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
      */
     this.selector = function () {
         return d3.select('#' + this.drawTarget + ' svg');
-    }
+    };
     
     /**
      * Draw the concept cloud visualisation.
@@ -247,7 +247,6 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
      */
     this.toggleStyle = function (name) {
         name = name.toLowerCase();
-        var self = this;
         if (name == 'bold' || name == 'italic') {
             this[name] = !this[name];
             if (this.webMode) {
@@ -315,7 +314,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
                         .text(function(d) { return d.text; });
                         
         if (self.webMode) {
-            self.selector().selectAll('text').style("font-size", function(d) { return getFontSizeForWeb(d.size) + "px"; })
+            self.selector().selectAll('text').style("font-size", function(d) { return getFontSizeForWeb(d.size) + "px"; });
             drawSpanningTreeLinks();
         }
         
@@ -356,7 +355,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             var colours = tib.uic.COLOURS.categorical[self.colourStyle];
             self.themeColours = {};
             var themeCount = 0;
-            for (id in self.themes) {
+            for (var id in self.themes) {
     
                 // Truncate colourisation of themes by connectivity
                 if (themeCount <= self.numThemes && themeCount < colours.length) {
@@ -369,7 +368,13 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             }
         }
         else {
-            self.colours = tib.uic.COLOURS.random[self.colourStyle];
+            if (tib.uic.COLOURS.random[self.colourStyle] !== undefined) {
+                self.colours = tib.uic.COLOURS.random[self.colourStyle];
+            } else if (tib.uic.COLOURS.sequential[self.colourStyle] !== undefined) {
+                self.colours = tib.uic.COLOURS.sequential[self.colourStyle];
+            } else if (tib.uic.COLOURS.divergent[self.colourStyle] !== undefined) {
+                self.colours = tib.uic.COLOURS.divergent[self.colourStyle];
+            }
         }
         
         self.selector().selectAll('text').style("fill", function(d) { return getColourForWord(d.text); })
@@ -390,7 +395,14 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         // Thematic colouring
         coloursMenu.append($('<li class="nav-header">By Theme</li>'));
         $.each(tib.uic.COLOURS.categorical, function (key, value) {
-            var listEl = $('<li class="colour"><a href="#">' + key + '</a></li>');
+            // Build colour icons
+            var colours = '';
+            $.each(value, function (index, val) {
+                colours += '<i class="icon-sign-blank" style="color: ' + val + ';"></i>';
+            });
+            // Don't forget the inactive colour
+            colours += '<i class="icon-sign-blank" style="color: ' + INACTIVE_THEME_COLOUR + ';"></i>';
+            var listEl = $('<li class="colour"><a href="#">' + colours + '</a></li>');
             // Click handler
             listEl.click(function(e) {
                 e.preventDefault();
@@ -409,7 +421,57 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         // Random colouring
         coloursMenu.append($('<li class="nav-header">Random</li>'));
         $.each(tib.uic.COLOURS.random, function (key, value) {
-            var listEl = $('<li class="colour"><a href="#">' + key + '</a></li>');
+            var colours = '';
+            $.each(value.range().slice(0, 8), function (index, val) {
+                colours += '<i class="icon-sign-blank" style="color: ' + val + ';"></i>';
+            });
+            var listEl = $('<li class="colour"><a href="#">' + colours + ' ...</a></li>');
+            // Click handler
+            listEl.click(function(e) {
+                e.preventDefault();
+                self.themeColouring = false;
+                self.colourStyle = key;
+                updateColours();
+                $('#cloud-menu-colours li.colour').removeClass('active');
+                listEl.addClass('active');
+            });
+
+            if (!self.themeColouring && key == self.colourStyle) {
+                listEl.addClass('active')
+            }
+            coloursMenu.append(listEl);
+        });
+        // Linear
+        coloursMenu.append($('<li class="nav-header">Sequential</li>'));
+        $.each(tib.uic.COLOURS.sequential, function (key, value) {
+            var colours = '';
+            $.each(value.range().reverse(), function (index, val) {
+                colours += '<i class="icon-sign-blank" style="color: ' + val + ';"></i>';
+            });
+            var listEl = $('<li class="colour"><a href="#">' + colours + '</a></li>');
+            // Click handler
+            listEl.click(function(e) {
+                e.preventDefault();
+                self.themeColouring = false;
+                self.colourStyle = key;
+                updateColours();
+                $('#cloud-menu-colours li.colour').removeClass('active');
+                listEl.addClass('active');
+            });
+
+            if (!self.themeColouring && key == self.colourStyle) {
+                listEl.addClass('active')
+            }
+            coloursMenu.append(listEl);
+        });
+        // Divergent
+        coloursMenu.append($('<li class="nav-header">Divergent</li>'));
+        $.each(tib.uic.COLOURS.divergent, function (key, value) {
+            var colours = '';
+            $.each(value.range().reverse(), function (index, val) {
+                colours += '<i class="icon-sign-blank" style="color: ' + val + ';"></i>';
+            });
+            var listEl = $('<li class="colour"><a href="#">' + colours + '</a></li>');
             // Click handler
             listEl.click(function(e) {
                 e.preventDefault();
