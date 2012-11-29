@@ -1,3 +1,4 @@
+import os
 from django.conf import settings
 import lexrestclient as lex
 import lxml
@@ -137,8 +138,12 @@ def get_markers(url):
 
 def delete_project(url):
     """
-    Delete project at URL
+    Delete project at URL. Also delete the file.
     """
+    project = lex.LexObject.from_url(url, auth=settings.LEX_AUTH)
+    text_path = os.path.join(settings.TEXT_PATH, "{0}.txt".format(project.name))
+    if os.path.exists(text_path):
+        os.remove(text_path)
     lex.rest_invoke(url, method='DELETE', auth=settings.LEX_AUTH)
 
 def get_concepts(markers_xml):
@@ -178,5 +183,3 @@ def get_concepts(markers_xml):
                 if node.tag == 'edge':
                     prominence.append({'from': int(node.attrib['from']), 'to': int(node.attrib['to']), 'weight': float(node.attrib['w'])})
     return entities, themes, prominence
-
-
