@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import json
+import logging
 import os
 import smtplib
 import urllib
@@ -11,6 +12,8 @@ from django.shortcuts import render
 import time
 from tib import utils
 from tib.forms import ContactForm
+
+logger = logging.getLogger('tib')
 
 def result(request):
     """
@@ -81,7 +84,8 @@ def contact_email(request):
                     "email_attempt": True,
                     "email_failed": False
                 })
-            except smtplib.SMTPException:
+            except smtplib.SMTPException as err:
+                logger.exception(err)
                 return render(request, "contact.html", {
                     "email_attempt": True,
                     "email_failed": True,

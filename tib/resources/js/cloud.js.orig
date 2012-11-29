@@ -175,6 +175,16 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     };
     
     /**
+<<<<<<< HEAD
+=======
+     * Returns the d3 selector for this visualisation.
+     */
+    this.selector = function () {
+        return d3.select('#' + this.drawTarget + ' svg');
+    };
+    
+    /**
+>>>>>>> 934fe64a7896e7550aa85a9408264c0c6b946bf3
      * Draw the concept cloud visualisation.
      */
     this.draw = function (params) {
@@ -317,7 +327,11 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         
                         
         if (self.webMode) {
+<<<<<<< HEAD
             self.selector.selectAll('text').style("font-size", function(d) { return getFontSizeStr(d.size); })
+=======
+            self.selector().selectAll('text').style("font-size", function(d) { return getFontSizeForWeb(d.size) + "px"; });
+>>>>>>> 934fe64a7896e7550aa85a9408264c0c6b946bf3
             drawSpanningTreeLinks();
         }
         
