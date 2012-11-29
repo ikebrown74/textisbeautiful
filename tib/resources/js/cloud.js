@@ -1,18 +1,4 @@
 /**
- * Cloud visualisation.
- */
-
-/// IN PROGRESS
-///////////////////
-/// TODO
-//// - Colours/themes
-//// - Prefer positioning based on relatedness (test alphabetically)?
-//// - Font sizing scale options
-//// - More orientations
-//// - Word limit
-//////////////////
-
-/**
  * Encapsulates the Concept Cloud visualisation.
  *
  * @param {Object} config Config options for this class. Requires height and width
@@ -22,6 +8,7 @@
 tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     
     var INACTIVE_THEME_COLOUR = '#bbb';
+    var MST_STROKE = '#ccc';
 
     var orientations = {
         'Messy' : [5, 30, 60],
@@ -48,7 +35,6 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
 
     $.extend(this, config);
 
-    this.layout = null;
     var self = this;
 
     /*
@@ -105,7 +91,9 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
                     x1: cluster[word.text].x,
                     y1: cluster[word.text].y,
                     x2: cluster[toWordName].x,
-                    y2: cluster[toWordName].y
+                    y2: cluster[toWordName].y,
+                    sourceName: word.text,
+                    targetName: toWordName
                 });
             }
         }
@@ -126,7 +114,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
      * Cleanup all traces of this visualisation.
      */
     this.destroy = function () {
-        this.selector().remove();
+        this.selector.remove();
         $('#vis-menu .cloud-menu').remove();
     };
 
@@ -146,8 +134,8 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
 
 
         // Links
-        this.selector().selectAll('path').each(function (line) {
-            c.strokeStyle = "#ccc";
+        this.selector.selectAll('line').each(function (line) {
+            c.strokeStyle = MST_STROKE;
             c.lineWidth = 1;
             c.beginPath();
             c.moveTo(line.x1, line.y1);
@@ -157,16 +145,15 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         });
         
         // Words
-        this.selector().selectAll("text").each(function (word) {
+        this.selector.selectAll("text").each(function (word) {
             c.save();
             if (self.webMode) {
                 c.translate(self.cluster[word.text].x, self.cluster[word.text].y);
-                c.font = getFontSizeForWeb(word.size) + "px " + word.font;
             }
             else {
                 c.translate(word.x, word.y);
-                c.font = word.size + "px " + word.font;
             }
+            c.font = d3.select(this).style('font');
             c.rotate(word.rotate * Math.PI / 180);
             c.textAlign = "center";
             c.fillStyle = getColourForWord(word.text);
@@ -188,13 +175,6 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     };
     
     /**
-     * Returns the d3 selector for this visualisation.
-     */
-    this.selector = function () {
-        return d3.select('#' + this.drawTarget + ' svg');
-    }
-    
-    /**
      * Draw the concept cloud visualisation.
      */
     this.draw = function (params) {
@@ -208,6 +188,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         if (!this.drawn) {
             $('#' + this.drawTarget).css('width', String(this.width) + 'px');
             this.initMenu();
+            self.fisheye = d3.fisheye.circular().radius(110).distortion(3);
         }
         
         if (webModeToggled && this.drawn) {
@@ -217,6 +198,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         else if (!this.drawn || params.forceRedraw) {
             // Draw
             generate();
+            this.selector.on("mousemove", fisheyeTransform);
             this.drawn = true;
         }
         
@@ -251,7 +233,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         if (name == 'bold' || name == 'italic') {
             this[name] = !this[name];
             if (this.webMode) {
-                this.selector().selectAll('text')
+                this.selector.selectAll('text')
                     .style("font-style", this.italic ? 'italic' : 'normal')
                     .style("font-weight", this.bold ? 'bold' : 'normal')
             }
@@ -268,62 +250,106 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         
         drawSpanningTreeLinks();
             
-        this.selector().selectAll('text').transition()
+        this.selector.selectAll('text').transition()
             .duration(750)
-            .style("font-size", function(d) { return (self.webMode ? getFontSizeForWeb(d.size) : d.size) + "px"; })
+            .style("font-size", function(d) { return getFontSizeStr(d.size); })
             .attr("transform", function(d) {
-                var x = self.webMode ? self.cluster[d.text].x : d.x;
-                var y = self.webMode ? self.cluster[d.text].y : d.y;
-                return "translate(" + [x, y] + ")rotate(" + (self.webMode ? 0 : d.rotate) + ")";
+                var coords = getWordCoords(d);
+                return "translate(" + coords.x + ", " + coords.y + ")rotate(" + (self.webMode ? 0 : d.rotate) + ")";
             });
     };
     
     // Draw the links for the MST.
     var drawSpanningTreeLinks = function () {
-        self.selector().selectAll('path').remove();
+        
+        self.selector.selectAll('line').remove();
+        
         if (self.webMode === true) {
-            self.selector().selectAll('path').data(self.mst)
-                .enter().insert("path", ":first-child")
-                .attr("d", function (d) { return "M " + d.x1 + ", " + d.y1 + " L" + d.x2 + ", " + d.y2})
-                .attr("transform", "translate(" + self.width/2 + "," + self.height/2 + ")")
-                .style("stroke-width", 1)
-                .style("stroke", "#ccc")
-                .style("fill", "none");
+            
+            // Draw links
+            self.selector.selectAll('line').data(self.mst).enter()
+                .insert("line", ":first-child")
+                    .attr("x1", function (d) { return d.x1 + self.width/2})
+                    .attr("y1", function (d) { return d.y1 + self.height/2})
+                    .attr("x2", function (d) { return d.x2 + self.width/2})
+                    .attr("y2", function (d) { return d.y2 + self.height/2})
+                    .style("stroke-width", 1)
+                    .style("stroke", MST_STROKE)
+                    .style("fill", "none");
+                  
+            // Store linked words on the line
+            self.selector.selectAll('line').each(function (d) {
+                d.source = self.renderedWords[d.sourceName];
+                d.target = self.renderedWords[d.targetName];
+                if (!d.source || !d.target) {
+                    // Remove links with missing nodes
+                    d3.select(this).remove();
+                }
+            });
         }
     };
     
     // Render the words
     var drawWords = function (words) {
-        self.renderedWords = words;
-        $('div#' + self.drawTarget).empty();
-            d3.select("div#" + self.drawTarget).append("svg")
-                .attr("width", self.width)
-                .attr("height", self.height)
-                .append("g")
-                    .attr("transform", "translate(" + self.width/2 + "," + self.height/2 + ")")
-                    .selectAll("text")
-                    .data(words)
-                    .enter().append("text")
-                        .style("font-size", function(d) { return d.size + "px"; })
-                        .style("font-family", self.font)
-                        .style("font-style", self.italic ? 'italic' : 'normal')
-                        .style("font-weight", self.bold ? 'bold' : 'normal')
-                        .attr("text-anchor", "middle")
-                        .attr("transform", function(d) {
-                            return "translate(" + [self.webMode ? self.cluster[d.text].x : d.x, self.webMode ? self.cluster[d.text].y : d.y] + ")rotate(" + (self.webMode ? 0 : d.rotate) + ")";
-                        })
-                        .text(function(d) { return d.text; });
+        
+        self.renderedWords = {};
+        $.each(words, function (i, w) {
+            self.renderedWords[w.text] = w; 
+        });
+        
+        self.selector = d3.select('#' + self.drawTarget).append("svg");
+        self.selector
+            .attr("width", self.width)
+            .attr("height", self.height)
+            .append("g")
+                .selectAll("text")
+                .data(words)
+                .enter().append("text")
+                    .style("font-size", function(d) { return d.size + "px"; })
+                    .style("font-family", self.font)
+                    .style("font-style", self.italic ? 'italic' : 'normal')
+                    .style("font-weight", self.bold ? 'bold' : 'normal')
+                    .attr("text-anchor", "middle")
+                    .attr("transform", function(d) {
+                        var coords = getWordCoords(d);
+                        return "translate(" + coords.x + ", " + coords.y + ")rotate(" + (self.webMode ? 0 : d.rotate) + ")";
+                    })
+                    .text(function(d) { return d.text; });
+        
                         
         if (self.webMode) {
-            self.selector().selectAll('text').style("font-size", function(d) { return getFontSizeForWeb(d.size) + "px"; })
+            self.selector.selectAll('text').style("font-size", function(d) { return getFontSizeStr(d.size); })
             drawSpanningTreeLinks();
         }
         
         updateColours();
     };
     
+    // Perform the fisheye transform
+    var fisheyeTransform = function () {
+        if (self.webMode) {          
+            self.fisheye.focus(d3.mouse(this));
+            self.selector.selectAll("text").each(function(d) { d.fisheye = self.fisheye(getWordCoords(d)); })
+                .style('font-size', function (d) { return getFontSizeStr(d.size * d.fisheye.z);})
+                .attr("transform", function(d) {
+                    return "translate(" + d.fisheye.x + ", " + d.fisheye.y + ")";
+                });
+                
+            self.selector.selectAll("line")
+                .attr("x1", function(d) { return d.source.fisheye.x; })
+                .attr("y1", function(d) { return d.source.fisheye.y; })
+                .attr("x2", function(d) { return d.target.fisheye.x; })
+                .attr("y2", function(d) { return d.target.fisheye.y; });
+        }
+    };
+    
     // Start the D3 drawing process
     var generate = function () {
+        
+        if (self.selector) {
+            self.selector.remove();
+        }
+        
         self.layout = d3.layout.cloud().size([self.width, self.height])
             .words(self.words)
             .rotate(function() { return ~~(Math.random() * self.orientation[0]) * self.orientation[1] - self.orientation[2]; })
@@ -336,6 +362,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             .start();
     };
     
+    // Determine colour for the specified word
     var getColourForWord = function (text) {
         if (self.themeColouring) {
             return self.themeColours[self.wordsForName[text].themeId];
@@ -343,9 +370,18 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         return self.colours(text);
     };
     
-    // Determine font size for web mode
-    var getFontSizeForWeb = function (originalSize) {
-        return 2 + 3 * Math.sqrt(originalSize);
+    // Determine font style attribute
+    var getFontSizeStr = function (originalSize) {
+        return (self.webMode ? 2 + 3 * Math.sqrt(originalSize) : originalSize) + 'px';
+    };
+    
+    // Get x & y coords for word
+    var getWordCoords = function (d) {
+        var x = self.webMode ? self.cluster[d.text].x : d.x;
+        var y = self.webMode ? self.cluster[d.text].y : d.y;
+        x = x + self.width/2;
+        y = y + self.height/2;    
+        return {x: x, y: y};
     };
     
     // Update colours
@@ -372,7 +408,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             self.colours = tib.uic.COLOURS.random[self.colourStyle];
         }
         
-        self.selector().selectAll('text').style("fill", function(d) { return getColourForWord(d.text); })
+        self.selector.selectAll('text').style("fill", function(d) { return getColourForWord(d.text); })
     };
 
     /**
