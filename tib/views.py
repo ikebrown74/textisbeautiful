@@ -10,6 +10,8 @@ from django.core.mail import mail_admins
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
 from django.shortcuts import render
 import time
+import httplib2
+from tib import html2text
 from tib import utils
 from tib.forms import ContactForm
 
@@ -20,9 +22,19 @@ def result(request):
     This view accepts text and creates a leximancer project for that text.
     """
     if request.method == "POST":
-        text = request.POST['text_content']
-        if len(text) < 5000 or len(text) > 105000:
-            return render(request, 'create.html', {'text_error': True})
+        text = None
+        if 'text_content' in request.POST:
+            text = request.POST['text_content']
+            if len(text) < 5000 or len(text) > 105000:
+                return render(request, 'create.html', {'text_error': True})
+        else:
+            url = request.POST['wiki_url']
+            if 'wikipedia.org/wiki/' in url:
+                resp, content = httplib2.Http().request(url, headers={'User-Agent':'textisbeautiful.net/1.0'})
+                text = html2text.html2text(content.decode('utf-8', url))
+#                print text
+            else:
+                return render(request, 'create.html', {'wiki_error': True})
         # Unique ID for this search uses current time and the text
         id = hashlib.md5('{0}:{1}'.format(time.time(), text.encode('utf8'))).hexdigest()
         # Write the text to a file (really shouldn't need to do this but oh well).
@@ -59,7 +71,7 @@ def status(request, id):
     elif result[0] == 'MAP':
         concepts, themes, prominence = utils.get_concepts(utils.get_markers(result[3]))
         # We don't want tp keep projects around.
-        utils.delete_project(url)
+        #utils.delete_project(url)
         return HttpResponse(json.dumps({"message": 'Here come the visualisations...', 'completed': True, 'progress': 100, 'markers': {"concepts": concepts, "themes": themes, "iprom": prominence}}), content_type='text/json')
     else:
         if result[1] == 'error':

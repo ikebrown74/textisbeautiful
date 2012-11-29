@@ -17,7 +17,6 @@
             </div>
         </div>
     </div>
-
     <div>
         <div id="content">
             <div class="container">
@@ -27,6 +26,11 @@
                         <div class="alert alert-error">
                             <strong>Error!</strong> You managed to submit a number of characters outside the accepted range (playing with the JavaScript are we!?). Please submit between <strong>5000 and 100,000</strong> characters!
                         </div>
+                        {% endif %}
+                        {% if wiki_error %}
+                            <div class="alert alert-error">
+                                <strong>Error!</strong> That doesn't look like a Wikipedia URL to us. Apologies if we have it wrong.
+                            </div>
                         {% endif %}
                         <p>You've decided to create something beautiful, good to hear! It's pretty simple from here. Just copy and paste the text you want to use for your creation below.</p>
                     </div>
@@ -40,7 +44,24 @@
                                 <small><span id="numChars" class="text-error">0</span> characters so far.</small>
                                 <span class="help-block">Min 5,000 / Max 100,000 characters.</span>
                             </div>
-                            <button type="submit" class="btn btn-success">Create Visualisation</button>
+                            <button type="submit" class="btn btn-success">Visualise Your Text&nbsp;&nbsp;<i class="icon-chevron-right icon-white"></i></button>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span12" style="text-align: center">
+                        <h1>OR</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span12">
+                        <p>Haven't got any text? Why not try a <a href="http://en.wikipedia.org/wiki/Main_Page" target="_blank">Wikipedia</a> page instead?</p>
+                        <form id="wikiForm" method="POST" action="/result/">
+                            {% csrf_token %}
+                            <div class="control-group">
+                               <input type="text" class="span9" name="wiki_url" placeholder="Paste the Wikipedia URL here...">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Visualise Wikipedia&nbsp;&nbsp;<i class="icon-chevron-right icon-white"></i></button>
                         </form>
                     </div>
                 </div>
