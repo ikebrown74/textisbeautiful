@@ -80,7 +80,7 @@
                             </li>
                             <li><a href="#">What am I looking at?</a></li>
                         </ul>
-                    <div id="vis-canvas" style="margin: 0 auto;"></div>
+                    <div id="vis-canvas" style="margin: 0 auto;cursor:default" onselectstart="return false;"></div>
                 </div>
             </div>
         </div>
@@ -113,6 +113,7 @@
     <script src="{{ STATIC_URL }}js/d3.v2.min.js"></script>
     {% endif %}
     <script src="{{ STATIC_URL }}js/d3.layout.cloud.js"></script>
+    <script src="{{ STATIC_URL }}js/d3.fisheye.js"></script>
     <!-- Application JS -->
     <script src="{{ STATIC_URL }}js/vis.js"></script>
     <script src="{{ STATIC_URL }}js/cloud.js"></script>
@@ -136,8 +137,8 @@
                             // Project has run, time to get visual!
                             // Register visualisations
                             tib.vis.Manager.registerVis('ConceptCloud', {
-                                width: 900,
-                                height: 490,
+                                width: 1000,
+                                height: 700,
                                 padding: 0
                             });
                             // Draw primary vis
