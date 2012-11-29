@@ -14,19 +14,10 @@
 {% block body_content %}
     <div id="content">
         <div class="container">
-            <div class="row" id="progress">
-                <div class="span12 txt-middle">
-                    <div class="progress progress-striped active">
-                        <div id="run_progress" class="bar" style="width: 0%;"></div>
-                    </div>
-                    <p id="run_status">Creating the Leximancer Project....</p>
-
-                </div>
-            </div>
             <div class="row" id="slides">
                 <div class="span12 txt-middle">
+                    <h2>We are analysing your text now</h2> <h4>Here's some quick examples of the visualisations you're about to see while you wait...</h4>
                     <div class="span8 offset2">
-                        <h3>We are analysing your text now. Here's some quick examples of the visualisations you're about to see while you wait...</h3>
                         <div id="myCarousel" class="carousel slide">
                             <div class="carousel-inner">
                                 <div class="active item"><img alt="" src="{{ STATIC_URL }}img/alice_800x400.png"></div>
@@ -39,6 +30,16 @@
                     </div>
                 </div>
             </div>
+            <div class="row" id="progress">
+                <div class="span12 txt-middle">
+                    <div class="progress progress-striped active">
+                        <div id="run_progress" class="bar" style="width: 0%;"></div>
+                    </div>
+                    <p id="run_status">Creating the Leximancer Project....</p>
+
+                </div>
+            </div>
+
             <div class="row">
                 <div class="span12">
                     <ul id="vis-types" class="nav nav-pills nav-pills-green" style="display:none">
@@ -122,6 +123,10 @@
     <script src="{{ STATIC_URL }}js/util.js"></script>
     <script>
         $(document).ready(function() {
+            $('.carousel').carousel({
+                interval: 2000,
+                pause: false
+            });
             var executeAjax = function() {
                 $.ajax({
                     url: '/result/{{ id }}/',
