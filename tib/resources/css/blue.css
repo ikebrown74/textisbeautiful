@@ -29,6 +29,36 @@ body {
     color: #FFFFFF;
 }
 
+.nav-pills-red a {
+    color: #B94A48;
+}
+
+.nav-pills-red > .active > a,
+.nav-pills-red > .active > a:hover {
+    color: #ffffff;
+    background-color: #B94A48;
+}
+
+.nav-pills-green a {
+    color: #468847;
+}
+
+.nav-pills-green > .active > a,
+.nav-pills-green > .active > a:hover {
+    color: #ffffff;
+    background-color: #468847;
+}
+
+.nav-pills-inverse a {
+    color: #333;
+}
+
+.nav-pills-inverse > .active > a,
+.nav-pills-inverse > .active > a:hover {
+    color: #ffffff;
+    background-color: #333;
+}
+
 /* Landing
 -------------------------------------------------- */
 #landing {
