@@ -429,7 +429,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         $(menuContainer).prepend('<li class="cloud-menu dropdown" id="cloud-menu-colours"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Colours<b class="caret"></b></a><ul class="dropdown-menu"></ul></li>');
         var coloursMenu = $('#cloud-menu-colours ul');
         // Thematic colouring
-        coloursMenu.append($('<li class="nav-header">By Theme</li>'));
+        coloursMenu.append($('<li class="nav-header">Colour by Theme</li>'));
         $.each(tib.uic.COLOURS.categorical, function (key, value) {
             // Build colour icons
             var colours = '';
@@ -455,7 +455,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             coloursMenu.append(listEl);
         });
         // Random colouring
-        coloursMenu.append($('<li class="nav-header">Random</li>'));
+        coloursMenu.append($('<li class="nav-header">Colour Randomly</li>'));
         $.each(tib.uic.COLOURS.random, function (key, value) {
             var colours = '';
             $.each(value.range().slice(0, 8), function (index, val) {
@@ -478,7 +478,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             coloursMenu.append(listEl);
         });
         // Linear
-        coloursMenu.append($('<li class="nav-header">Sequential</li>'));
+        coloursMenu.append($('<li class="divider"></li>'));
         $.each(tib.uic.COLOURS.sequential, function (key, value) {
             var colours = '';
             $.each(value.range().reverse(), function (index, val) {
@@ -501,7 +501,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             coloursMenu.append(listEl);
         });
         // Divergent
-        coloursMenu.append($('<li class="nav-header">Divergent</li>'));
+        coloursMenu.append($('<li class="divider"></li>'));
         $.each(tib.uic.COLOURS.divergent, function (key, value) {
             var colours = '';
             $.each(value.range().reverse(), function (index, val) {
