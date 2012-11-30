@@ -82,7 +82,7 @@
             })();
             $("#theText").keyup(function(event) {
                 typewatch(function() {
-                    var chars = event.srcElement.value.length;
+                    var chars = $("#theText > textarea").get(0).value.length;
                     $('#numChars').text($.format.number(chars, '#,##0'));
                     if (chars >= 5000 && chars <= 100000) {
                         $('#numChars').removeClass().addClass("text-success");
@@ -92,13 +92,13 @@
                     }
                 }, 500);
             });
-            $("#textForm").submit(function(event) {
-                var chars = $("#theText > textarea").val().length;
-                if (chars < 5000 || chars > 100000) {
-                    $("#theText").addClass("error");
-                    return false;
-                }
-            });
+{#            $("#textForm").submit(function(event) {#}
+{#                var chars = $("#theText > textarea").val().length;#}
+{#                if (chars < 5000 || chars > 100000) {#}
+{#                    $("#theText").addClass("error");#}
+{#                    return false;#}
+{#                }#}
+{#            });#}
         });
     </script>
 {% endblock %}
