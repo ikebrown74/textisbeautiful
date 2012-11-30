@@ -8,7 +8,7 @@
 tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     
     var INACTIVE_THEME_COLOUR = '#bbb';
-    var MST_STROKE = '#ccc';
+    var MST_STROKE = '#eee';
 
     var orientations = {
         'Messy' : [5, 30, 60],
@@ -26,7 +26,6 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     this.font = 'Trebuchet MS';
     this.fontSize = d3.scale.pow().range([8, 160]);
     this.mode = 'Archimedean';
-    this.numThemes = 8;
     this.orientation = orientations['Horizontal'];
     this.colourStyle = 'Basic';
     this.themeColouring = true;
@@ -109,7 +108,23 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     };
     $.extend(this, initData(data));
     this.fontSize.domain(this.sizeDomain);
-    
+
+    // Setup some additional font colour options
+    var hot = [];
+    var medium = [];
+    var mild = [];
+    for (var i = 0; i < 100; i += 10) {
+        var hc = tib.util.hslToRgb(i/100, 1, .7);
+        var mc = tib.util.hslToRgb((i+80)%100/100, .8, .55);
+        var mlc = tib.util.hslToRgb((i+60)%100/100, .8, .4);
+        hot.push("rgb(" + Math.round(hc[0]) + "," + Math.round(hc[1]) + "," + Math.round(hc[2]) + ")");
+        medium.push("rgb(" + Math.round(mc[0]) + "," + Math.round(mc[1]) + "," + Math.round(mc[2]) + ")");
+        mild.push("rgb(" + Math.round(mlc[0]) + "," + Math.round(mlc[1]) + "," + Math.round(mlc[2]) + ")");
+    }
+    tib.uic.COLOURS['Hot'] = hot;
+    tib.uic.COLOURS['Medium'] = medium;
+    tib.uic.COLOURS['Mild'] = mild;
+
     /**
      * Cleanup all traces of this visualisation.
      */
@@ -363,10 +378,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     
     // Determine colour for the specified word
     var getColourForWord = function (text) {
-        if (self.themeColouring) {
-            return self.themeColours[self.wordsForName[text].themeId];
-        }
-        return self.colours(text);
+        return self.themeColours[self.wordsForName[text].themeId];
     };
     
     // Determine font style attribute
@@ -385,34 +397,22 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     
     // Update colours
     var updateColours = function () {
-        
-        if (self.themeColouring) {
-            // Themes
-            var colours = tib.uic.COLOURS.categorical[self.colourStyle];
-            self.themeColours = {};
-            var themeCount = 0;
-            for (var id in self.themes) {
-    
-                // Truncate colourisation of themes by connectivity
-                if (themeCount <= self.numThemes && themeCount < colours.length) {
-                    self.themeColours[id] = colours[themeCount];
-                }
-                else {
-                    self.themeColours[id] = INACTIVE_THEME_COLOUR;
-                }
-                themeCount = themeCount + 1;
+
+        var colours = tib.uic.COLOURS[self.colourStyle];
+        self.themeColours = {};
+        var themeCount = 0;
+        for (var id in self.themes) {
+
+            // Truncate colourisation of themes by connectivity
+            if (themeCount < colours.length) {
+                self.themeColours[id] = colours[themeCount];
             }
-        }
-        else {
-            if (tib.uic.COLOURS.random[self.colourStyle] !== undefined) {
-                self.colours = tib.uic.COLOURS.random[self.colourStyle];
-            } else if (tib.uic.COLOURS.sequential[self.colourStyle] !== undefined) {
-                self.colours = tib.uic.COLOURS.sequential[self.colourStyle];
-            } else if (tib.uic.COLOURS.divergent[self.colourStyle] !== undefined) {
-                self.colours = tib.uic.COLOURS.divergent[self.colourStyle];
+            else {
+                self.themeColours[id] = INACTIVE_THEME_COLOUR;
             }
+            themeCount = themeCount + 1;
         }
-        
+
         self.selector.selectAll('text').style("fill", function(d) { return getColourForWord(d.text); })
     };
 
@@ -428,17 +428,21 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         // Colour selection
         $(menuContainer).prepend('<li class="cloud-menu dropdown" id="cloud-menu-colours"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Colours<b class="caret"></b></a><ul class="dropdown-menu"></ul></li>');
         var coloursMenu = $('#cloud-menu-colours ul');
-        // Thematic colouring
-        coloursMenu.append($('<li class="nav-header">Colour by Theme</li>'));
-        $.each(tib.uic.COLOURS.categorical, function (key, value) {
+        // Theme colouring
+        coloursMenu.append($('<li class="nav-header">Theme Colours</li>'));
+        $.each(tib.uic.COLOURS, function (key, value) {
             // Build colour icons
+            console.log(value);
             var colours = '';
+            var ellipsis = false ;
             $.each(value, function (index, val) {
+                if (index === 10) {
+                    ellipsis = true;
+                    return false;
+                }
                 colours += '<i class="icon-sign-blank" style="color: ' + val + ';"></i>';
             });
-            // Don't forget the inactive colour
-            colours += '<i class="icon-sign-blank" style="color: ' + INACTIVE_THEME_COLOUR + ';"></i>';
-            var listEl = $('<li class="colour"><a href="#">' + colours + '</a></li>');
+            var listEl = $('<li class="colour"><a href="#">' + colours + (ellipsis ? '...' : '') + '</a></li>');
             // Click handler
             listEl.click(function(e) {
                 e.preventDefault();
@@ -454,76 +458,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             }
             coloursMenu.append(listEl);
         });
-        // Random colouring
-        coloursMenu.append($('<li class="nav-header">Colour Randomly</li>'));
-        $.each(tib.uic.COLOURS.random, function (key, value) {
-            var colours = '';
-            $.each(value.range().slice(0, 8), function (index, val) {
-                colours += '<i class="icon-sign-blank" style="color: ' + val + ';"></i>';
-            });
-            var listEl = $('<li class="colour"><a href="#">' + colours + ' ...</a></li>');
-            // Click handler
-            listEl.click(function(e) {
-                e.preventDefault();
-                self.themeColouring = false;
-                self.colourStyle = key;
-                updateColours();
-                $('#cloud-menu-colours li.colour').removeClass('active');
-                listEl.addClass('active');
-            });
 
-            if (!self.themeColouring && key == self.colourStyle) {
-                listEl.addClass('active')
-            }
-            coloursMenu.append(listEl);
-        });
-        // Linear
-        coloursMenu.append($('<li class="divider"></li>'));
-        $.each(tib.uic.COLOURS.sequential, function (key, value) {
-            var colours = '';
-            $.each(value.range().reverse(), function (index, val) {
-                colours += '<i class="icon-sign-blank" style="color: ' + val + ';"></i>';
-            });
-            var listEl = $('<li class="colour"><a href="#">' + colours + '</a></li>');
-            // Click handler
-            listEl.click(function(e) {
-                e.preventDefault();
-                self.themeColouring = false;
-                self.colourStyle = key;
-                updateColours();
-                $('#cloud-menu-colours li.colour').removeClass('active');
-                listEl.addClass('active');
-            });
-
-            if (!self.themeColouring && key == self.colourStyle) {
-                listEl.addClass('active')
-            }
-            coloursMenu.append(listEl);
-        });
-        // Divergent
-        coloursMenu.append($('<li class="divider"></li>'));
-        $.each(tib.uic.COLOURS.divergent, function (key, value) {
-            var colours = '';
-            $.each(value.range().reverse(), function (index, val) {
-                colours += '<i class="icon-sign-blank" style="color: ' + val + ';"></i>';
-            });
-            var listEl = $('<li class="colour"><a href="#">' + colours + '</a></li>');
-            // Click handler
-            listEl.click(function(e) {
-                e.preventDefault();
-                self.themeColouring = false;
-                self.colourStyle = key;
-                updateColours();
-                $('#cloud-menu-colours li.colour').removeClass('active');
-                listEl.addClass('active');
-            });
-
-            if (!self.themeColouring && key == self.colourStyle) {
-                listEl.addClass('active')
-            }
-            coloursMenu.append(listEl);
-        });
-        
         // Layout selection
         $(menuContainer).prepend('<li class="cloud-menu dropdown" id="cloud-menu-layout"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Layout<b class="caret"></b></a><ul class="dropdown-menu" id="cloud-menu-layout"></ul></li>');
         var layoutMenu = $('#cloud-menu-layout ul');
@@ -621,7 +556,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             $('#cloud-menu-refresh').show();
             $('#vis-types li.cloud').addClass('active');
         }
-    }
+    };
 
     return this;
 };
