@@ -567,7 +567,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             });
     };
 
-    // Create the
+    // Create the body content for the help modal.
     this.initHelp = function () {
 
         // Place to inject
@@ -578,14 +578,17 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
                 '<h3>Concept Web</h3>'+
                 '<p>This is where you really see the power of the text analytics provided by <a href="http://leximancer.com" target="_blank">Leximancer</a>.</p>'+
                 '<p>In this visualisation, the position of concepts matter. Concepts that are more realted will appear near each other. Concepts that aren\'t very related will appear futher apart.</p>'+
-                '<p>As with the Concept Cloud, related concepts are grouped into <em>themes</em>. Themes are denoted by colour.</p>';
+                '<p>As with the Concept Cloud, related concepts are grouped into <em>themes</em>. Themes are denoted by colour.</p>' +
+                '<p>There is one cavaet with theme colouring you should be aware of. The number of themes identified by Leximancer depends on the number of concepts found which in turn depends on your text. The available colour schemse define between 8 and 10 colours. If there are are more themes then there is colours in your selected scheme, the remaining themes will be coloured grey. This can cause confusion with colour schemes them themselves contain grey.</p>';
+
         }
         else {
             modal +=
                 '<h3>Concept Cloud</h3>'+
                 '<p>This visualisation is inspired by Wordle but it has a little <a href="http://leximancer.com" target="_blank">Leximancer</a> magic sprinkled on top.</p>'+
                 '<p>In this visualisation, the concepts are positioned randomly to keep the visualisation nice and compact. The size of a concept dentones how frequent it is within the text.</p>'+
-                '<p>Unlike Wordle, the Concept Cloud groups concepts into <em>themes</em>. Themes are denoted by colour. Concepts that have the same colour belong to the same theme and are cloesly related. You can select the colours you want to use under the colour menu. Some colours work better with the Concept Cloud, others work better with the Concept Web.</p>';
+                '<p>Unlike Wordle, the Concept Cloud groups concepts into <em>themes</em>. Themes are denoted by colour. Concepts that have the same colour belong to the same theme and are cloesly related. You can select the colours you want to use under the colour menu. Some colours work better with the Concept Cloud, others work better with the Concept Web.</p>' +
+                '<p>There is one cavaet with theme colouring you should be aware of. The number of themes identified by Leximancer depends on the number of concepts found which in turn depends on your text. The available colour schemse define between 8 and 10 colours. If there are are more themes then there is colours in your selected scheme, the remaining themes will be coloured grey. This can cause confusion with colour schemes them themselves contain grey.</p>';
         }
         visContainer.append(modal);
     };
