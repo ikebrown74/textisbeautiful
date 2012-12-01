@@ -8,7 +8,6 @@
 tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     
     var INACTIVE_THEME_COLOUR = '#bbb';
-    var MST_STROKE = '#eee';
 
     var orientations = {
         'Messy' : [5, 30, 60],
@@ -28,7 +27,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     this.mode = 'Archimedean';
     this.orientation = orientations['Horizontal'];
     this.colourStyle = 'Basic';
-    this.themeColouring = true;
+    this.bgStyle = 'White';
     this.webMode = false;
     this.words = [];
 
@@ -144,13 +143,14 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
 
         canvas.width = self.width;
         canvas.height = self.height;
+        c.fillStyle = tib.uic.BG_COLOURS[self.bgStyle][0];
+        c.fillRect(0, 0, self.width, self.height);
         c.translate(self.width >> 1, self.height >> 1);
         c.scale(1, 1);
 
-
         // Links
         this.selector.selectAll('line').each(function (line) {
-            c.strokeStyle = MST_STROKE;
+            c.strokeStyle = tib.uic.BG_COLOURS[self.bgStyle][1];
             c.lineWidth = 1;
             c.beginPath();
             c.moveTo(line.x1, line.y1);
@@ -288,7 +288,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
                     .attr("x2", function (d) { return d.x2 + self.width/2})
                     .attr("y2", function (d) { return d.y2 + self.height/2})
                     .style("stroke-width", 1)
-                    .style("stroke", MST_STROKE)
+                    .style("stroke", tib.uic.BG_COLOURS[self.bgStyle][1])
                     .style("fill", "none");
                   
             // Store linked words on the line
@@ -416,6 +416,13 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         self.selector.selectAll('text').style("fill", function(d) { return getColourForWord(d.text); })
     };
 
+    // Update background colour
+    var updateBackgroundColour = function () {
+        self.selector.style("background-color", tib.uic.BG_COLOURS[self.bgStyle][0]);
+        self.selector.selectAll('line').style("stroke", tib.uic.BG_COLOURS[self.bgStyle][1])
+        $('#' + self.drawTarget).css("background-color", tib.uic.BG_COLOURS[self.bgStyle][0]);
+    };
+
     /**
      * Initialise the menu for this vis. This method injects the menu into the corrext place.
      */
@@ -428,11 +435,28 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         // Colour selection
         $(menuContainer).prepend('<li class="cloud-menu dropdown" id="cloud-menu-colours"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Colours<b class="caret"></b></a><ul class="dropdown-menu"></ul></li>');
         var coloursMenu = $('#cloud-menu-colours ul');
+        // Background colouring
+        coloursMenu.append($('<li class="nav-header">Background Colours</li>'));
+        $.each(tib.uic.BG_COLOURS, function (key, value) {
+            var listEl = $('<li class="bg-colour"><a href="#">' + key + '</a></li>');
+            // Click handler
+            listEl.click(function(e) {
+                e.preventDefault();
+                self.bgStyle = key;
+                updateBackgroundColour();
+                $('#cloud-menu-colours li.bg-colour').removeClass('active');
+                listEl.addClass('active');
+            });
+
+            if (key == self.bgStyle) {
+                listEl.addClass('active')
+            }
+            coloursMenu.append(listEl);
+        });
         // Theme colouring
         coloursMenu.append($('<li class="nav-header">Theme Colours</li>'));
         $.each(tib.uic.COLOURS, function (key, value) {
             // Build colour icons
-            console.log(value);
             var colours = '';
             var ellipsis = false ;
             $.each(value, function (index, val) {
@@ -446,14 +470,13 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             // Click handler
             listEl.click(function(e) {
                 e.preventDefault();
-                self.themeColouring = true;
                 self.colourStyle = key;
                 updateColours();
                 $('#cloud-menu-colours li.colour').removeClass('active');
                 listEl.addClass('active');
             });
 
-            if (self.themeColouring && key == self.colourStyle) {
+            if (key == self.colourStyle) {
                 listEl.addClass('active')
             }
             coloursMenu.append(listEl);

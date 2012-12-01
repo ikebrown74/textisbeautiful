@@ -25,5 +25,11 @@ tib.uic.COLOURS = {
     'Grey': ["rgb(37,37,37)", "rgb(82,82,82)", "rgb(115,115,115)", "rgb(150,150,150)", "rgb(189,189,189)", "rgb(217,217,217)", "rgb(240,240,240)"]
 };
 
+// Background and MST colours
+tib.uic.BG_COLOURS = {
+    'White': ["#fff", "#eee"],
+    'Black': ["#000", "#333"]
+};
+
 tib.uic.FONTS = ['ABeeZee', 'Arial', 'Audiowide', 'Average Sans', 'Butcherman', 'Cantora One', 'Georgia', 'Impact', 'Kite One',
                 'Montserrat', 'Montserrat Alternates', 'Paprika', 'Revalia', 'Sanchez', 'Share Tech Mono', 'Trebuchet MS'];
