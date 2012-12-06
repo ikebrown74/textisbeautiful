@@ -151,6 +151,7 @@ def get_concepts(markers_xml):
     """
     Convert the markers XML file to JSON.
     """
+    num_blocks = None
     results = []
     entities = {}
     themes = {}
@@ -160,6 +161,7 @@ def get_concepts(markers_xml):
 
     for marker in markers:
         if marker.tag == 'markers':
+            num_blocks = marker.attrib['cbcount']
             for entity in marker:
                 entities[int(entity.attrib['id'])] = {
                     'id': int(entity.attrib['id']),
@@ -183,7 +185,7 @@ def get_concepts(markers_xml):
             for node in marker[0]:
                 if node.tag == 'edge':
                     prominence.append({'from': int(node.attrib['from']), 'to': int(node.attrib['to']), 'weight': float(node.attrib['w'])})
-    return entities, themes, prominence
+    return entities, themes, prominence, num_blocks
 
 def update_map(project_url):
     """
