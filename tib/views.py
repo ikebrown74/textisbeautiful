@@ -70,10 +70,14 @@ def status(request, id):
     if not result:
         return HttpResponse(json.dumps({"message": 'Creating Leximancer project...', 'progress': 0, 'completed': False}), content_type='text/json')
     elif result[0] == 'MAP':
-        concepts, themes, prominence = utils.get_concepts(utils.get_markers(result[3]))
+        project_url = result[3]
+        (markers_url, markers_cookie) = utils.update_map(project_url)
+        concepts, themes, prominence, num_blocks = utils.get_concepts(utils.get_markers(markers_url, markers_cookie))
         # We don't want tp keep projects around.
         utils.delete_project(url)
-        return HttpResponse(json.dumps({"message": 'Here come the visualisations...', 'completed': True, 'progress': 100, 'markers': {"concepts": concepts, "themes": themes, "iprom": prominence}}), content_type='text/json')
+        return HttpResponse(json.dumps({"message": 'Here come the visualisations...', 'completed': True, 'progress': 100,
+                                        'markers': {"concepts": concepts, "themes": themes, "iprom": prominence, "numBlocks" : num_blocks}})
+                            , content_type='text/json')
     else:
         if result[1] == 'error':
             return HttpResponseServerError("Leximancer project failed to run - {0}".format(result[2]))

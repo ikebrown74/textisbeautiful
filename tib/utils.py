@@ -104,6 +104,7 @@ def create_lex_project(name, doc, mimetype=None):
     df = lex.LexObject.from_url(u'{0}/{1}'.format(data_folder.href, doc), auth=settings.LEX_AUTH)
     docset.create_file(doc, df, auth=settings.LEX_AUTH, mimetype=mimetype)
     run_project(lex_project.project_status[0])
+
     return lex_project
 
 def run_project(status):
@@ -128,11 +129,11 @@ def get_project_status(url):
     except StandardError:
         raise ResourceError('Couldn\'t fetch project using the URL {0}'.format(url))
 
-def get_markers(url):
+def get_markers(markers_url, cookie):
     """
     Get the markers for the project at URL.
     """
-    resp, content = lex.rest.rest_invoke('{0}{1}'.format(url, '_/cluster_/markers/') , auth=settings.LEX_AUTH)
+    resp, content = lex.rest.rest_invoke(markers_url , auth=settings.LEX_AUTH, headers={'Cookie':cookie})
     if resp.status == 200:
         return content
 
@@ -150,6 +151,7 @@ def get_concepts(markers_xml):
     """
     Convert the markers XML file to JSON.
     """
+    num_blocks = None
     results = []
     entities = {}
     themes = {}
@@ -159,6 +161,7 @@ def get_concepts(markers_xml):
 
     for marker in markers:
         if marker.tag == 'markers':
+            num_blocks = marker.attrib['cbcount']
             for entity in marker:
                 entities[int(entity.attrib['id'])] = {
                     'id': int(entity.attrib['id']),
@@ -182,4 +185,22 @@ def get_concepts(markers_xml):
             for node in marker[0]:
                 if node.tag == 'edge':
                     prominence.append({'from': int(node.attrib['from']), 'to': int(node.attrib['to']), 'weight': float(node.attrib['w'])})
-    return entities, themes, prominence
+    return entities, themes, prominence, num_blocks
+
+def update_map(project_url):
+    """
+    Update map resource.
+    
+    """
+    name = '@map1'
+    copy_url = project_url + '_/cluster/markersets/default/copy'
+    
+    
+    resp, content = lex.rest.rest_invoke(copy_url , auth=settings.LEX_AUTH,  method="POST", params={'name' : name})
+    map_url = resp['location']    
+    cookie = resp['set-cookie']
+    
+    # Set theme size
+    lex.rest.rest_invoke(map_url + '/cluster' , auth=settings.LEX_AUTH,  method="POST", headers={'Cookie':cookie}, params={'themeonly' : True, 'themesize' : settings.PROJECT_THEME_SIZE})
+    
+    return (map_url + '/map', cookie)
