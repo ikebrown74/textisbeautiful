@@ -92,13 +92,13 @@
                     }
                 }, 500);
             });
-{#            $("#textForm").submit(function(event) {#}
-{#                var chars = $("#theText > textarea").val().length;#}
-{#                if (chars < 5000 || chars > 100000) {#}
-{#                    $("#theText").addClass("error");#}
-{#                    return false;#}
-{#                }#}
-{#            });#}
+            $("#textForm").submit(function(event) {
+                var chars = $("#theText > textarea").val().length;
+                if (chars < 5000 || chars > 100000) {
+                    $("#theText").addClass("error");
+                    return false;
+                }
+            });
         });
     </script>
 {% endblock %}
