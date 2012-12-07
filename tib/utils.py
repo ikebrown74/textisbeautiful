@@ -150,11 +150,9 @@ def get_concepts(markers_xml):
     """
     Convert the markers XML file to JSON.
     """
-    results = []
     entities = {}
     themes = {}
     prominence = []
-#    sections = lxml.etree.fromstring(xml_d?ata)
     markers = lxml.etree.fromstring(markers_xml)
 
     for marker in markers:
@@ -171,6 +169,16 @@ def get_concepts(markers_xml):
                     'x': float(entity.attrib['x']),
                     'y': float(entity.attrib['y'])
                 }
+                for rels in entity:
+                    related = []
+                    for rel in rels:
+                        related.append({
+                            'id': rel.attrib['id'],
+                            'strength': rel.attrib['str'],
+                            'count': rel.attrib['ct'],
+                            'prom': rel.attrib['pr']
+                        })
+                    entities[int(entity.attrib['id'])]['related'] = related
         if marker.tag == 'themes':
             for theme in marker:
                 themes[int(theme.attrib['index'])] = {'id': int(theme.attrib['index']), 'name': theme.attrib['name'], 'hue': theme.attrib['hue'], "connectivity": theme.attrib['connectiv']}

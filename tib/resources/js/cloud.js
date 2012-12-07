@@ -131,6 +131,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         this.selector.remove();
         $('#vis-menu .cloud-menu').remove();
         $('#vis-help .cloud-help').remove();
+        $('#vis-types li').removeClass('active');
     };
 
     /**
@@ -191,7 +192,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     };
     
     /**
-     * Draw the concept cloud visualisation.
+     * Draw this visualisation.
      */
     this.draw = function (params) {
         
@@ -314,8 +315,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         });
         
         self.selector = d3.select('#' + self.drawTarget).append("svg");
-        self.selector
-            .attr("width", self.width)
+        self.selector.attr("width", self.width)
             .attr("height", self.height)
             .append("g")
                 .selectAll("text")

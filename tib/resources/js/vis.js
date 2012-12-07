@@ -96,7 +96,6 @@ tib.vis.Manager = function () {
                 case 'GOP':
                     tib.util.googlePlus(currentVis.asPNG());
                     break;
-
             }
         }
     }
