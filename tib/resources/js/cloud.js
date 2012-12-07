@@ -8,6 +8,16 @@
 tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     
     var INACTIVE_THEME_COLOUR = '#bbb';
+    
+    // Some scary magic numbers for text scaling.
+    var TEXT_SCALE = {
+        EXP_MAX: 2.00,
+        EXP_MIN: 0.80,
+        MEAN_FACTOR_THRESH: 0.60,
+        RANGE_FACTOR_THRESH: 0.10,
+        RANGE_LOWER_THRESH: 100,
+        RANGE_UPPER_THRESH: 330
+    };
 
     var orientations = {
         'Messy' : [5, 30, 60],
@@ -19,7 +29,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     // Setup class properties
     /////////////////
     // Defaults
-    this.bold = false;
+    this.bold = true;
     this.italic = false;
     this.fill = d3.scale.category20();
     this.font = 'Trebuchet MS';
@@ -46,16 +56,20 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         var wordNamesForId = {};
         var minSize = null;
         var maxSize = null;
+        var totalSize = 0;
         for (var id in data.markers.concepts) {
             
             var w = data.markers.concepts[id];
             words.push(word = {
                 edges: w.mstEdges,
+                //size: Math.log(w.frequency),
                 size: parseInt(w.weight, 10),
                 text: w.value,
                 themeId: w.themeId,
                 themeConnectivity: data.markers.themes[w.themeId].connectivity
             });
+            
+            totalSize += word.size;
             
             if (minSize == null) {
                 minSize = maxSize = word.size;
@@ -74,6 +88,48 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             // Helper data structures
             wordNamesForId[w.id] = w.value;
             wordsForName[word.text] = word;
+        }
+        
+        var sizeRange = maxSize - minSize;
+        var mean = totalSize / words.length;
+        var count = 0;
+        for (var i = 0; i < words.length; i++) {
+            w = words[i];
+            if (w.size < mean) {
+                count++;
+            }
+        }
+        
+        // Words below mean relative to all words
+        var meanFactor = count / words.length;
+        
+        // Size range relative to cumulative size
+        var rangeFactor = sizeRange / totalSize;
+        
+        // Word connectivity will hopefully generally take the form of a power-law (or similar) distribution.
+        // This will generally present an aesthetically appealing range of font sizes in the cloud.
+        // When the distribution does not follow this trend, the cloud may appear aneamic or bloated.
+        // What follows below is a very naiive and crude attempt to detect and transform certain types of distributions.
+        // We either increase or decrease the exponent (defaults to 1), to perform a non-linear contraction/expansion of the dist.
+        if (
+            // Too few words below the mean relative to size range.
+            meanFactor <= TEXT_SCALE.MEAN_FACTOR_THRESH && sizeRange > TEXT_SCALE.RANGE_LOWER_THRESH
+            
+            // Text size range is too large. Contract the distribution to decrease it.
+            // Hopefully this results in a more predictable, pleasing cloud.
+            || sizeRange > TEXT_SCALE.RANGE_UPPER_THRESH
+            
+            // Unusually small text size range relative to cumulative total of all text sizes.
+            // This suggests we have a high concentration of words at the upper range.
+            // Things may look better if we expand the size range.
+            || sizeRange < TEXT_SCALE.RANGE_LOWER_THRESH && rangeFactor < TEXT_SCALE.RANGE_FACTOR_THRESH
+        ) {
+            // If sizeRange < upper threshold, then perform expansion, otherwise contraction
+            var exponent = TEXT_SCALE.RANGE_UPPER_THRESH / sizeRange;
+            // Apply bounds to exponent so we don't do anything too crazy
+            exponent = Math.min(TEXT_SCALE.EXP_MAX, exponent);
+            exponent = Math.max(TEXT_SCALE.EXP_MIN, exponent);
+            self.fontSize.exponent(exponent);
         }
 
         // Sort words by theme
