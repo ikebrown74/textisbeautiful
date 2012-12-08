@@ -7,6 +7,8 @@
  */
 tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     
+    var FISHEYE_RADIUS = 120;
+    var FISHEYE_DISTORTION = 2.5;
     var INACTIVE_THEME_COLOUR = '#bbb';
     
     // Some scary magic numbers for text scaling.
@@ -262,7 +264,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             $('#' + this.drawTarget).css('width', String(this.width) + 'px');
             this.initMenu();
             this.initHelp();
-            self.fisheye = d3.fisheye.circular().radius(110).distortion(3);
+            this.fisheye = d3.fisheye.circular().radius(FISHEYE_RADIUS).distortion(FISHEYE_DISTORTION);
         }
         
         if (webModeToggled && this.drawn) {
@@ -401,8 +403,8 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     var fisheyeTransform = function () {
         if (self.webMode) {          
             self.fisheye.focus(d3.mouse(this));
-            self.selector.selectAll("text").each(function(d) { d.fisheye = self.fisheye(getWordCoords(d)); })
-                .style('font-size', function (d) { return getFontSizeStr(d.size * d.fisheye.z);})
+            self.selector.selectAll("text").each(function(d) { d.fisheye = self.fisheye(getWordCoords(d));})
+                //.style('font-size', function (d) { return getFontSizeStr(d.size * d.fisheye.z);})
                 .attr("transform", function(d) {
                     return "translate(" + d.fisheye.x + ", " + d.fisheye.y + ")";
                 });
