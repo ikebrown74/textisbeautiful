@@ -1,0 +1,9 @@
+{% load i18n %}
+{% load url from future %}
+<form method="get" id="searchform" action="{% url 'zinnia_entry_search' %}">
+    <div class="input-append">
+        <input type="text" placeholder="{% trans "Keywords..." %}" value="{{ pattern }}" name="pattern" id="searchbox" />
+        <button class="btn btn-primary" type="submit">Search</button>
+        <a href="#" class="btn" data-trigger="click" data-placement="bottom" rel="tooltip" title="{% trans 'You can use - to exclude words or phrases, &quot;double quotes&quot; for exact phrases and the AND/OR boolean operators combined with parenthesis for complex queries.' %}" type="button">Help</a>
+    </div>
+</form>

@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}">
     <head>
         <meta charset="utf-8">
         <title>Text is Beautiful | {% block page_title %}Home{% endblock %}</title>
+        <meta name="robots" content="follow, all" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="Evan Clemente">
+        <meta name="author" content="K & R Consultants">
+        {% block meta %}
+            <meta name="description" content="{% block meta-description %}Demonstration of the Zinnia Blog application.{% endblock %}" />
+            <meta name="keywords" content="{% block meta-keywords %}django, blog, zinnia, {{ entry_tags|join:", "}}{% endblock %}" />
+        {% endblock %}
+        <link rel="home" href="http://textisbeautiful.net" />
         <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
         <link href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" rel="stylesheet">
         <link href="{{ STATIC_URL }}css/font-awesome.css" rel="stylesheet">
@@ -23,6 +28,7 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ STATIC_URL }}img/ico/favicon.ico">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ STATIC_URL }}img/ico/favicon.ico">
         <link rel="apple-touch-icon-precomposed" href="{{ STATIC_URL }}img/ico/favicon.ico">
+        {% block link %}{% endblock %}
         {% if not debug %}
         <script type="text/javascript">
             var _gaq = _gaq || [];
@@ -37,10 +43,9 @@
             })();
         </script>
         {% endif %}
-        {% block extra_head %}{% endblock %}
+        {% block script %}{% endblock %}
     </head>
-
-    <body>
+    <body class="{% block body_class %}{% endblock %}">
         <a href="https://github.com/rstuart85/textisbeautiful"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1031;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
         <div class="navbar navbar-fixed-top" xmlns="http://www.w3.org/1999/html">
             <div class="navbar-inner">
@@ -53,7 +58,14 @@
                     <a class="brand" href="/">Text is Beautiful</a>
                     <div class="nav-collapse collapse">
                         <ul class="nav pull-right">
-                            {% block menu_items %}{% endblock %}
+                            {% block menu_items %}
+                                {% block nav_home %}<li><a href="{% url home %}">Home</a></li>{% endblock %}
+                                {% block nav_about %}<li><a href="{% url about %}">About</a></li>{% endblock %}
+                                {% block nav_faq %}<li><a href="{% url faq %}">FAQ</a></li>{% endblock %}
+                                {% block nav_blog %}<li><a href="/blog/">Blog</a></li>{% endblock %}
+                                {% block nav_create %}<li><a href="{% url create %}">Create</a></li>{% endblock %}
+                                {% block nav_contact %}<li><a href="{% url contact %}">Contact</a></li>{% endblock %}
+                            {% endblock %}
                         </ul>
                     </div>
                 </div>
@@ -76,9 +88,10 @@
                     <div class="span4">
                         <h3>Stuff You Should See</h3>
                         <ul>
+                            <li><a href="/blog/">Our Blog</a></li>
                             <li><a href="http://leximancer.com" target="_blank">Leximancer</a></li>
                             <li><a href="http://www.wordle.net" target="_blank">Wordle</a></li>
-                            <li><a href="/faq/" target="_blank">FAQ</a></li>
+                            <li><a href="{% url faq %}">The FAQ</a></li>
                         </ul>
                     </div>
                     <div class="span4">
@@ -109,6 +122,7 @@
         <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
         <script>
             $(document).ready(function(){
+                $("[rel=tooltip]").tooltip();
                 $("#totop").click(function () {
                     $("body, html").animate({
                         scrollTop: 0
