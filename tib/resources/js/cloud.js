@@ -584,7 +584,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         var fontMenu = $('ul#cloud-menu-text');
         // Style options
         fontMenu.append($('<li class="nav-header">Style</li>'));
-        $('<li class="style"><a href="#" style="font-weight:bold">Bold</a></li>').appendTo(fontMenu)
+        var boldEl = $('<li class="style"><a href="#" style="font-weight:bold">Bold</a></li>').appendTo(fontMenu)
             // Click handler
             .click(function(e) {
                 e.preventDefault();
@@ -592,13 +592,15 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
                 $(this).toggleClass('active');
                 self.toggleStyle('bold');
             });
-        $('<li class="style"><a href="#" style="font-weight:bold">Italic</a></li>').appendTo(fontMenu)
+        boldEl.toggleClass('active', self.bold);
+        var italicEl = $('<li class="style"><a href="#" style="font-weight:bold">Italic</a></li>').appendTo(fontMenu)
             // Click handler
             .click(function(e) {
                 e.preventDefault();
                 $(this).toggleClass('active');
                 self.toggleStyle('italic');
             });
+        italicEl.toggleClass('active', self.italic);
         // Font Family options
         fontMenu.append('<li class="nav-header">Font</li>');
         $(tib.uic.FONTS).each(function (i, font) {
