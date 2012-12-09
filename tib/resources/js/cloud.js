@@ -200,53 +200,6 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     };
 
     /**
-     * Export the cloud/web as PNG data url.
-     */
-    this.asPNG = function () {
-        
-        // Use canvas to generate png data
-        var canvas = document.createElement("canvas"),
-            c = canvas.getContext("2d");
-
-        canvas.width = self.width;
-        canvas.height = self.height;
-        c.fillStyle = tib.uic.BG_COLOURS[self.bgStyle][0];
-        c.fillRect(0, 0, self.width, self.height);
-        c.translate(self.width >> 1, self.height >> 1);
-        c.scale(1, 1);
-
-        // Links
-        this.selector.selectAll('line').each(function (line) {
-            c.strokeStyle = tib.uic.BG_COLOURS[self.bgStyle][1];
-            c.lineWidth = 1;
-            c.beginPath();
-            c.moveTo(line.x1, line.y1);
-            c.lineTo(line.x2, line.y2);
-            c.stroke();
-            c.closePath();
-        });
-        
-        // Words
-        this.selector.selectAll("text").each(function (word) {
-            c.save();
-            if (self.webMode) {
-                c.translate(self.cluster[word.text].x, self.cluster[word.text].y);
-            }
-            else {
-                c.translate(word.x, word.y);
-            }
-            c.font = d3.select(this).style('font');
-            c.rotate(word.rotate * Math.PI / 180);
-            c.textAlign = "center";
-            c.fillStyle = getColourForWord(word.text);
-            c.fillText(word.text, 0, 0);
-            c.restore();
-        });
-        
-        return canvas.toDataURL("image/png");
-    };
-
-    /**
      * Select the layout mode for the cloud.
      *
      * @param value The string value for the layout desired.
