@@ -21,10 +21,14 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         RANGE_UPPER_THRESH: 330
     };
 
-    var orientations = {
-        'Messy' : [5, 30, 60],
+    // Angles for cloud layout. 0 degress is horizontal. Specify in the form:
+    // [number intervals, start angle, end angle]
+    var ORIENTATIONS = {
         'Horizontal' : [0, 0, 0],
-        'Vertical' : [0, 0, 90]
+        'Balanced' : [10, -15, 15],
+        'Messy' : [12, -60, 60],
+        'Vertical' : [0, -90, 90],
+        'Madness' : [36, -180, 180]
     };
 
     /////////////////
@@ -37,7 +41,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     this.font = 'Trebuchet MS';
     this.fontSize = d3.scale.pow().range([8, 160]);
     this.mode = 'Archimedean';
-    this.orientation = orientations['Horizontal'];
+    this.orientation = ORIENTATIONS['Horizontal'];
     this.colourStyle = 'Basic';
     this.bgStyle = 'White';
     this.webMode = false;
@@ -295,7 +299,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     };
 
     this.selectOrientation = function(orientation) {
-        self.orientation = orientations[orientation];
+        self.orientation = ORIENTATIONS[orientation];
         self.draw({forceRedraw: true});
     };
     
@@ -424,9 +428,11 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             self.selector.remove();
         }
         
+        var scale = d3.scale.linear().domain([0, self.orientation[0] - 1]).range([self.orientation[1], self.orientation[2]]);
+
         self.layout = d3.layout.cloud().size([self.width, self.height])
             .words(self.words)
-            .rotate(function() { return ~~(Math.random() * self.orientation[0]) * self.orientation[1] - self.orientation[2]; })
+            .rotate(function() { return scale(~~(Math.random() * self.orientation[0])); })
             .spiral(self.mode.toLowerCase())
             .font(self.font)
             .fontSize(function(d) { return self.fontSize(+d.size); })
@@ -562,8 +568,8 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             layoutMenu.append(listEl);
         });
         // Orientation options
-        layoutMenu.append($('<li class="nav-header">Word Orientation</li>'));
-        $.each(orientations, function (key, value) {
+        layoutMenu.append($('<li class="nav-header">Word Placement</li>'));
+        $.each(ORIENTATIONS, function (key, value) {
             var listEl = $('<li class="orientation"><a href="#">' + key + '</a></li>');
             // Click handler
             listEl.click(function(e) {
