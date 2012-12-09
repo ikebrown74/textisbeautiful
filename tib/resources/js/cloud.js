@@ -16,6 +16,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         EXP_MAX: 2.00,
         EXP_MIN: 0.80,
         MEAN_FACTOR_THRESH: 0.60,
+        OPTIONS: ['Automatic', 'Linear', 'Exponential', 'Square Root'],
         RANGE_FACTOR_THRESH: 0.10,
         RANGE_LOWER_THRESH: 100,
         RANGE_UPPER_THRESH: 330
@@ -35,15 +36,17 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     // Setup class properties
     /////////////////
     // Defaults
+    this.autoScaleExponent = 1;
+    this.bgStyle = 'White';
     this.bold = true;
+    this.colourStyle = 'Basic';
     this.italic = false;
     this.fill = d3.scale.category20();
     this.font = 'Trebuchet MS';
     this.fontSize = d3.scale.pow().range([8, 160]);
     this.mode = 'Archimedean';
     this.orientation = ORIENTATIONS['Horizontal'];
-    this.colourStyle = 'Basic';
-    this.bgStyle = 'White';
+    this.scaleType = 'Automatic';
     this.webMode = false;
     this.words = [];
 
@@ -135,7 +138,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             // Apply bounds to exponent so we don't do anything too crazy
             exponent = Math.min(TEXT_SCALE.EXP_MAX, exponent);
             exponent = Math.max(TEXT_SCALE.EXP_MIN, exponent);
-            self.fontSize.exponent(exponent);
+            self.autoScaleExponent = exponent;
         }
 
         // Sort words by theme
@@ -428,6 +431,22 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             self.selector.remove();
         }
         
+        switch (self.scaleType) {
+            case 'Automatic':
+                self.fontSize.exponent(self.autoScaleExponent);        
+                break;
+            case 'Exponential':
+                self.fontSize.exponent(TEXT_SCALE.EXP_MAX);
+                break;
+            case 'Linear':
+                self.fontSize.exponent(1);
+                break;
+            case 'Square Root':
+                self.fontSize.exponent(0.5);
+                break;
+        }
+        
+        
         var scale = d3.scale.linear().domain([0, self.orientation[0] - 1]).range([self.orientation[1], self.orientation[2]]);
 
         self.layout = d3.layout.cloud().size([self.width, self.height])
@@ -498,6 +517,29 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         var menuContainer = $('#vis-menu');
 
         /* Build the menu - last has to come first to preserve the share button */
+        
+        // Advanced menu
+        $(menuContainer).prepend('<li class="cloud-menu dropdown" id="cloud-menu-advanced"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Advanced<b class="caret"></b></a><ul class="dropdown-menu"></ul></li>');
+        var advancedMenu = $('#cloud-menu-advanced ul');
+        // Word size
+        advancedMenu.append($('<li class="nav-header">Word Scaling</li>'));
+        $.each(TEXT_SCALE.OPTIONS, function (i, value) {
+            var listEl = $('<li class="scale-type"><a href="#">' + value + '</a></li>');
+            // Click handler
+            listEl.click(function(e) {
+                e.preventDefault();
+                self.scaleType = value;
+                self.draw({forceRedraw: true});
+                $('#cloud-menu-advanced li.scale-type').removeClass('active');
+                listEl.addClass('active');
+            });
+
+            if (value == self.scaleType) {
+                listEl.addClass('active')
+            }
+            advancedMenu.append(listEl);
+        });
+        
         // Colour selection
         $(menuContainer).prepend('<li class="cloud-menu dropdown" id="cloud-menu-colours"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Colours<b class="caret"></b></a><ul class="dropdown-menu"></ul></li>');
         var coloursMenu = $('#cloud-menu-colours ul');
