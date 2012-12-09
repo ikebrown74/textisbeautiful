@@ -1,12 +1,9 @@
 {% extends "base.html" %}
+
 {% block page_title %}About{% endblock %}
-{% block menu_items %}
-                        <li><a href="/">Home</a></li>
-                        <li class="active"><a href="/about/">About</a></li>
-                        <li><a href="/faq/">FAQ</a></li>
-                        <li><a href="/create/">Create</a></li>
-                        <li><a href="/contact/">Contact</a></li>
-{% endblock %}
+
+{% block nav_about %}<li class="active"><a href="{% url about %}">About</a></li>{% endblock %}
+
 {% block body_content %}
     <div id="header">
         <div class="container">

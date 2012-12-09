@@ -1,12 +1,6 @@
 {% extends "base.html" %}
 {% block page_title %}FAQ{% endblock %}
-{% block menu_items %}
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/about/">About</a></li>
-                        <li class="active"><a href="/faq/">FAQ</a></li>
-                        <li><a href="/create/">Create</a></li>
-                        <li><a href="/contact">Contact</a></li>
-{% endblock %}
+{% block nav_faq %}<li class="active"><a href="{% url faq %}">FAQ</a></li>{% endblock %}
 {% block body_content %}
     <div id="header">
         <div class="container">

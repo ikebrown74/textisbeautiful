@@ -258,10 +258,10 @@ tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
     this.initHelp = function () {
         // Place to inject
         var modal = '<h3>Correlation Wheel</h3>'+
-                    '<p>This visualisation is inspired by Wordle but it has a little <a href="http://leximancer.com" target="_blank">Leximancer</a> magic sprinkled on top.</p>'+
-                    '<p>In this visualisation, the concepts are positioned randomly to keep the visualisation nice and compact. The size of a concept dentones how frequent it is within the text.</p>'+
-                    '<p>Unlike Wordle, the Concept Cloud groups concepts into <em>themes</em>. Themes are denoted by colour. Concepts that have the same colour belong to the same theme and are cloesly related. You can select the colours you want to use under the colour menu. Some colours work better with the Concept Cloud, others work better with the Concept Web.</p>' +
-                    '<p>There is one cavaet with theme colouring you should be aware of. The number of themes identified by Leximancer depends on the number of concepts found which in turn depends on your text. The available colour schemse define between 8 and 10 colours. If there are are more themes then there is colours in your selected scheme, the remaining themes will be coloured grey. This can cause confusion with colour schemes them themselves contain grey.</p>';
+                    '<p>You can use the correlation wheel to visualise which concepts are highly correlated with eachother. Two concepts are highly correlated if they appear together in the text often and appear apart rarely. The correlation is symetric.</p>'+
+                    '<p>This means that concepts which appear large in the Concept Web will most likely not be high correlated with any concepts. </p>'+
+                    '<p>Consider the concept Alice in the sotry Alice In Wonderland. The concpet Alice appears with a wide range of concepts throught the story. Alice isn\'t highly correlated with any one concept - it apears frequently with a wide range of concept.</p>' +
+                    '<p>You can use this visualisation to identify underlying themes in your text. In text about Economics, supply and demand are highly correlated. In text about Winston Churchill, the concepts election and campaign along with election and won are highly correlated. These relationships can help you better understand your text.</p>';
         $('#vis-help .modal-body').append(modal);
     };
 
