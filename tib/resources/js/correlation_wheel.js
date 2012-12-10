@@ -80,9 +80,9 @@ tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
         if (!this.drawn) {
             $('#' + self.drawTarget).css('width', String(self.width) + 'px');
             this.initHelp();
+            generate();
         }
 
-        generate();
         $('#vis-types li.correlation-wheel').addClass('active');
         
         this.drawn = true;
