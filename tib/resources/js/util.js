@@ -12,8 +12,12 @@ tib.util.imgurApiKey = "db94d28f5f22b16a404ca6c12a41d244";
  * @param {String} target ID of the div that is the parent of the SVG element
  */
 tib.util.downloadSVG = function (target) {
-    var svgContent = $('div#'+ target + ' svg').attr("version", "1.1").attr("xmlns", "http://www.w3.org/2000/svg").parent().get(0).innerHTML
+    var svgContent = tib.util.getSVG(target);
     window.open("data:image/svg+xml;charset=utf-8;base64," + btoa(unescape(encodeURIComponent(svgContent))));
+};
+
+tib.util.getSVG = function (target) {
+    return $('div#'+ target + ' svg').attr("version", "1.1").attr("xmlns", "http://www.w3.org/2000/svg").parent().get(0).innerHTML;
 };
 
 /**

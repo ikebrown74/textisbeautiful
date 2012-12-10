@@ -6,6 +6,11 @@
  * @constructor
  */
 tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
+    
+    var FONT_SIZE = '11px';
+    var FONT_SIZE_HOVER = '16px';
+    var LINK_WIDTH = 1;
+    var LINK_WIDTH_HOVER = 2.5;
 
     var self = this;
     $.extend(this, config);
@@ -17,6 +22,8 @@ tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
     this.arcWidth = 20;
     this.arcPadding = 4;
     this.numLinks = 200;
+    
+    var colour = d3.scale.category10();
 
     // Build the inverse prominence tree
     var initData = function(data) {
@@ -58,19 +65,12 @@ tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
         return {
             nodes: {
                 children: nodeList,
-                name: 'blah',
-                key: 'blah'
+                name: 'dummy-name',
+                key: 'dummy-key'
             }
         };
     };
     $.extend(this, initData(data));
-
-    /**
-     * Export story wheel as PNG data url.
-     */
-    this.asPNG = function () {
-        alert('Not yet implemented'); 
-    };
 
     /**
      * Draw this visualisation.
@@ -105,7 +105,6 @@ tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
             nodes.forEach(function (node) {
                 nodeList[node.name] = node;
             });
-            console.log(nodeList, nodeList.length);
 
             nodes.forEach(function (node) {
                 if (node.related) {
@@ -155,7 +154,6 @@ tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
                 }
                 sortedNodes[node.themeId].push(node.x);
             });
-            console.log(sortedNodes);
 
             for (var i in sortedNodes) {
                 var max = sortedNodes[i][0],
@@ -191,7 +189,6 @@ tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
         // Details for the Arc
         var arcInner = ry - 120 - self.arcWidth - self.arcPadding;
         var arcOuter = arcInner + self.arcWidth;
-        var colour = d3.scale.category10();
         var arc = d3.svg.arc().innerRadius(arcInner).outerRadius(arcOuter);
 
         self.selector =  d3.select('#' + self.drawTarget).append("svg");
@@ -219,39 +216,82 @@ tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
         .enter().append("svg:g")
             .attr("class", "node")
             .attr("id", function(d) { return "node-" + d.key; })
-            .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
         .append("svg:text")
             .attr("dy", ".31em")
             .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
-            .attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
-            .style('font-size', '10px')
+            .attr("transform", function(d) {
+                
+                // Convert polar -> cartesian coordinates
+                var r = d.y;
+                var theta = (d.x - 90) * (Math.PI / 180);
+                var deltaX = r * Math.cos(theta);
+                var deltaY = r * Math.sin(theta);
+                var t = "translate(" + deltaX + "," + deltaY + ")";
+                
+                // Determine correct rotation to be perpendicular to circle edge
+                var rotate = d.x - 90;
+                if (d.x >= 180) {
+                    // flip the word
+                    rotate += 180;
+                }
+                t += " rotate("  + rotate + ")";
+                
+                return t; 
+            })
+            .style('font-size', FONT_SIZE)
             .text(function(d) { return d.name; })
             .on("mouseover", function (d) {
-                self.selector.selectAll("path.link.target-" + d.key)
-                    .style("stroke-width", 2)
-                    .style("stroke", "#000");
-                self.selector.selectAll("path.link.source-" + d.key)
-                    .style("stroke-width", 2)
-                    .style("stroke", "#000");
+                hover(d.key, this, d);
             })
             .on("mouseout", function (d) {
-                self.selector.selectAll("path.link.source-" + d.key)
-                    .style("stroke-width", 1)
-                    .style("stroke", "#1f77b4");
-
-                self.selector.selectAll("path.link.target-" + d.key)
-                    .style("stroke-width", 1)
-                    .style("stroke", "#1f77b4");
+                unhover(d.key, this);
             });
 
         // Draw the theme arcs
-
         container.selectAll("path.arc")
             .data(calcArcs(self.nodes['children']))
         .enter().append("svg:path")
             .style('fill', function (d, i) { return colour(i); })
             .attr("d", function(d) { return arc(d); });
-
+    };
+    
+    // Hover a concept
+    var hover = function (key, text, d) {
+        
+        var hoverText = function (aText, aColour) {
+            aText
+                .style("fill", aColour)
+                .style("font-size", FONT_SIZE_HOVER)
+        };
+        
+        self.selector.selectAll(["path.link.target-" + key, "path.link.source-" + key])
+            .style("stroke-width", LINK_WIDTH_HOVER)
+            .style("stroke", "#000")
+            .each(function (d) {
+                var el = d3.select('#node-'+d.target.key).select('text');
+                hoverText(el, colour(el.data()[0].themeId));
+            });
+            
+        hoverText(d3.select(text), 'black');
+    };
+    
+    // Unhover a concept
+    var unhover = function (key, text) {
+        
+        var unhoverText = function (aText) {
+            aText
+                .style("fill", 'black')
+                .style("font-size", FONT_SIZE)
+        };
+        
+        self.selector.selectAll(["path.link.target-" + key, "path.link.source-" + key])
+            .style("stroke-width", LINK_WIDTH)
+            .style("stroke", "#1f77b4")
+            .each(function (d) {
+                unhoverText(d3.select('#node-'+d.target.key).select('text'));
+            });
+            
+        unhoverText(d3.select(text));
     };
 
     // Create the body content for the help modal.
@@ -260,9 +300,9 @@ tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
         $('#vis-help .modal-body').empty();
         // Place to inject
         var modal = '<h3>Correlation Wheel</h3>'+
-                    '<p>You can use the correlation wheel to visualise which concepts are highly correlated with eachother. Two concepts are highly correlated if they appear together in the text often and appear apart rarely. The correlation is symetric.</p>'+
-                    '<p>This means that concepts which appear large in the Concept Web will most likely not be high correlated with any concepts. </p>'+
-                    '<p>Consider the concept Alice in the sotry Alice In Wonderland. The concpet Alice appears with a wide range of concepts throught the story. Alice isn\'t highly correlated with any one concept - it apears frequently with a wide range of concept.</p>' +
+                    '<p>You can use the correlation wheel to visualise which concepts are highly correlated with eachother. Two concepts are highly correlated if they appear together in the text often and appear apart rarely. The correlation is symmetric.</p>'+
+                    '<p>This means that concepts which appear large in the Concept Web will most likely not be highly correlated with any concepts. </p>'+
+                    '<p>Consider the concept Alice in the sotry Alice In Wonderland. Alice appears with a wide range of concepts throught the story. Alice isn\'t highly correlated with any one concept - it apears frequently with a wide range of concepts.</p>' +
                     '<p>You can use this visualisation to identify underlying themes in your text. In text about Economics, supply and demand are highly correlated. In text about Winston Churchill, the concepts election and campaign along with election and won are highly correlated. These relationships can help you better understand your text.</p>';
         $('#vis-help .modal-body').append(modal);
     };
