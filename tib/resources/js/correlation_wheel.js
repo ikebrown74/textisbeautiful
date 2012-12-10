@@ -272,7 +272,7 @@ tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
                 hoverText(el, colour(el.data()[0].themeId));
             });
             
-        d3.select(text).style('fill', 'black');
+        hoverText(d3.select(text), 'black');
     };
     
     // Unhover a concept
@@ -290,6 +290,8 @@ tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
             .each(function (d) {
                 unhoverText(d3.select('#node-'+d.target.key).select('text'));
             });
+            
+        unhoverText(d3.select(text));
     };
 
     // Create the body content for the help modal.
