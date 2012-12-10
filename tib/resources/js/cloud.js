@@ -261,10 +261,12 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         if (!this.drawn) {
             $('#' + this.drawTarget).css('width', String(this.width) + 'px');
             this.initMenu();
-            this.initHelp();
             self.fisheye = d3.fisheye.circular().radius(110).distortion(3);
         }
-        
+
+        // Need to redraw help regardless so the right text is in it
+        this.initHelp();
+
         if (webModeToggled && this.drawn) {
             // Toggle between web and cloud mode
             this.doWebTransform();
@@ -625,7 +627,9 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
 
     // Create the body content for the help modal.
     this.initHelp = function () {
-
+        // Clear it out
+        $('#vis-help .modal-body').empty();
+        
         // Place to inject
         var visContainer = $('#vis-help .modal-body');
         var modal = '';

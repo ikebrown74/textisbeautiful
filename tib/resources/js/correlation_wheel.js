@@ -256,6 +256,8 @@ tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
 
     // Create the body content for the help modal.
     this.initHelp = function () {
+        // Clear it out
+        $('#vis-help .modal-body').empty();
         // Place to inject
         var modal = '<h3>Correlation Wheel</h3>'+
                     '<p>You can use the correlation wheel to visualise which concepts are highly correlated with eachother. Two concepts are highly correlated if they appear together in the text often and appear apart rarely. The correlation is symetric.</p>'+
