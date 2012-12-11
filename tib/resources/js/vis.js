@@ -55,6 +55,18 @@ tib.vis.Manager = function () {
         },
         
         /**
+         * Get PNG data url for the current visualisation.
+         */
+        getPNG : function () {
+            var canvas = document.createElement("canvas");
+            canvas.width = currentVis.width;
+            canvas.height = currentVis.height;
+            var ctx = canvas.getContext('2d');
+            ctx.drawSvg(tib.util.getSVG(drawTarget), 0, 0);
+            return canvas.toDataURL();
+        },
+        
+        /**
          * Register visualisation.
          * @param {String} type
          * @param {Object} config
@@ -82,19 +94,19 @@ tib.vis.Manager = function () {
         shareVis: function (exportType) {
             switch (exportType.toUpperCase()) {
                 case 'PNG':
-                    window.open(currentVis.asPNG());
+                    window.open(tib.vis.Manager.getPNG());
                     break;
                 case 'SVG':
                     tib.util.downloadSVG(drawTarget);
                     break;
                 case 'TWT':
-                    tib.util.tweet(currentVis.asPNG());
+                    tib.util.tweet(tib.vis.Manager.getPNG());
                     break;
                 case 'FCB':
-                    tib.util.facebook(currentVis.asPNG());
+                    tib.util.facebook(tib.vis.Manager.getPNG());
                     break;
                 case 'GOP':
-                    tib.util.googlePlus(currentVis.asPNG());
+                    tib.util.googlePlus(tib.vis.Manager.getPNG());
                     break;
             }
         }

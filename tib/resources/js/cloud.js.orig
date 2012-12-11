@@ -223,7 +223,12 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         if (!this.drawn) {
             $('#' + this.drawTarget).css('width', String(this.width) + 'px');
             this.initMenu();
+<<<<<<< HEAD
+            this.initHelp();
             this.fisheye = d3.fisheye.circular().radius(FISHEYE_RADIUS).distortion(FISHEYE_DISTORTION);
+=======
+            self.fisheye = d3.fisheye.circular().radius(110).distortion(3);
+>>>>>>> 60f84ffef198815aaaf9ec2777aa112c4d4318af
         }
 
         // Need to redraw help regardless so the right text is in it
@@ -634,7 +639,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     this.initHelp = function () {
         // Clear it out
         $('#vis-help .modal-body').empty();
-
+        
         // Place to inject
         var visContainer = $('#vis-help .modal-body');
         var modal = '';
