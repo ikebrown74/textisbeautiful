@@ -629,7 +629,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     this.initHelp = function () {
         // Clear it out
         $('#vis-help .modal-body').empty();
-        
+
         // Place to inject
         var visContainer = $('#vis-help .modal-body');
         var modal = '';

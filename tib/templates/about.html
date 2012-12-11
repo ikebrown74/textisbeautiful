@@ -21,7 +21,7 @@
                 <div class="span12">
                     <h2>What is this place</h2>
                     <p>This is a place for you to create cool visuals using your own text. We try to make the visuals aesthetically appealing but also informative about the text they represent. In the future we hope to add user contributed visualisations to the mix as well.</p>
-                    <p>This site was written by Kris and Ryan in our spare time. We launched the site with all functions being free. We hope to release more advanced features at a later date and some of them might be paid premium features. We are still mulling it over (covering hosting costs would be nice!). Feel free to <a href="/contact/">contact us</a> about any commercial propositions.</p>
+                    <p>This site was written by Kris and Ryan in our spare time. We launched the site with all functions being free. We hope to release more advanced features at a later date and some of them might be paid premium features. We are still mulling it over (covering hosting costs would be nice!). Feel free to <a href="{% url contact %}">contact us</a> about any commercial propositions.</p>
                 </div>
             </div>
             <div class="row">
@@ -35,142 +35,9 @@
             <div class="row">
                 <div class="span12">
                     <h2>I want more information</h2>
-                    <p>If you want more information, especially if it is of a technical nature, then we strongly suggest you <a href="/faq/">read the FAQ</a>. <strong>Everyone</strong> should <a href="/faq/">read the FAQ</a> before they start. If that isn't enough then <a href="/contact/">contact us</a>. Oh, and don't forget, <a href="/faq/">READ THE FAQ</a>!</p>
+                    <p>If you want more information, especially if it is of a technical nature, then we strongly suggest you <a href="{% url faq %}">read the FAQ</a>. <strong>Everyone</strong> should <a href="{% url faq %}">read the FAQ</a> before they start. If that isn't enough then <a href="{% url contact %}">contact us</a>. Oh, and don't forget, <a href="{% url faq %}">READ THE FAQ</a>!</p>
                 </div>
             </div>
-
-            {#            <div class="row">#}
-{#                <div class="span12">#}
-{#                    <h2 class="txt-middle">Our Team</h2>#}
-{#                    <hr class="dashed">#}
-{#                </div>#}
-{#            </div>#}
-{#            <div class="row">#}
-{#                <div class="span12">#}
-{#                    <ul class="thumbnails">#}
-{#                        <li class="span3">#}
-{#                            <div id="team" class="thumbnail">#}
-{#                                <img alt="" src="http://quickimage.it/300x180">#}
-{#                                <div class="caption">#}
-{#                                    <h4>John Smith</h4>#}
-{#                                    <p><em>Founder</em></p>#}
-{#                                    <div class="social">#}
-{#                                        <ul class="unstyled">#}
-{#                                            <li><a class="facebook" href=""><i class="icon-facebook-sign"></i></a></li>#}
-{#                                            <li><a class="twitter" href=""><i class="icon-twitter-sign"></i></a></li>#}
-{#                                        </ul>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </li>#}
-{#                        <li class="span3">#}
-{#                            <div id="team" class="thumbnail">#}
-{#                                <img alt="" src="http://quickimage.it/300x180">#}
-{#                                <div class="caption">#}
-{#                                    <h4>John Smith</h4>#}
-{#                                    <p><em>Founder</em></p>#}
-{#                                    <div class="social">#}
-{#                                        <ul class="unstyled">#}
-{#                                            <li><a class="facebook" href=""><i class="icon-facebook-sign"></i></a></li>#}
-{#                                            <li><a class="twitter" href=""><i class="icon-twitter-sign"></i></a></li>#}
-{#                                        </ul>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </li>#}
-{#                        <li class="span3">#}
-{#                            <div id="team" class="thumbnail">#}
-{#                                <img alt="" src="http://quickimage.it/300x180">#}
-{#                                <div class="caption">#}
-{#                                    <h4>John Smith</h4>#}
-{#                                    <p><em>Founder</em></p>#}
-{#                                    <div class="social">#}
-{#                                        <ul class="unstyled">#}
-{#                                            <li><a class="facebook" href=""><i class="icon-facebook-sign"></i></a></li>#}
-{#                                            <li><a class="twitter" href=""><i class="icon-twitter-sign"></i></a></li>#}
-{#                                        </ul>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </li>#}
-{#                        <li class="span3">#}
-{#                            <div id="team" class="thumbnail">#}
-{#                                <img alt="" src="http://quickimage.it/300x180">#}
-{#                                <div class="caption">#}
-{#                                    <h4>John Smith</h4>#}
-{#                                    <p><em>Founder</em></p>#}
-{#                                    <div class="social">#}
-{#                                        <ul class="unstyled">#}
-{#                                            <li><a class="facebook" href=""><i class="icon-facebook-sign"></i></a></li>#}
-{#                                            <li><a class="twitter" href=""><i class="icon-twitter-sign"></i></a></li>#}
-{#                                        </ul>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </li>#}
-{#                        <li class="span3">#}
-{#                            <div id="team" class="thumbnail">#}
-{#                                <img alt="" src="http://quickimage.it/300x180">#}
-{#                                <div class="caption">#}
-{#                                    <h4>John Smith</h4>#}
-{#                                    <p><em>Founder</em></p>#}
-{#                                    <div class="social">#}
-{#                                        <ul class="unstyled">#}
-{#                                            <li><a class="facebook" href=""><i class="icon-facebook-sign"></i></a></li>#}
-{#                                            <li><a class="twitter" href=""><i class="icon-twitter-sign"></i></a></li>#}
-{#                                        </ul>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </li>#}
-{#                        <li class="span3">#}
-{#                            <div id="team" class="thumbnail">#}
-{#                                <img alt="" src="http://quickimage.it/300x180">#}
-{#                                <div class="caption">#}
-{#                                    <h4>John Smith</h4>#}
-{#                                    <p><em>Founder</em></p>#}
-{#                                    <div class="social">#}
-{#                                        <ul class="unstyled">#}
-{#                                            <li><a class="facebook" href=""><i class="icon-facebook-sign"></i></a></li>#}
-{#                                            <li><a class="twitter" href=""><i class="icon-twitter-sign"></i></a></li>#}
-{#                                        </ul>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </li>#}
-{#                        <li class="span3">#}
-{#                            <div id="team" class="thumbnail">#}
-{#                                <img alt="" src="http://quickimage.it/300x180">#}
-{#                                <div class="caption">#}
-{#                                    <h4>John Smith</h4>#}
-{#                                    <p><em>Founder</em></p>#}
-{#                                    <div class="social">#}
-{#                                        <ul class="unstyled">#}
-{#                                            <li><a class="facebook" href=""><i class="icon-facebook-sign"></i></a></li>#}
-{#                                            <li><a class="twitter" href=""><i class="icon-twitter-sign"></i></a></li>#}
-{#                                        </ul>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </li>#}
-{#                        <li class="span3">#}
-{#                            <div id="team" class="thumbnail">#}
-{#                                <img alt="" src="http://quickimage.it/300x180">#}
-{#                                <div class="caption">#}
-{#                                    <h4>John Smith</h4>#}
-{#                                    <p><em>Founder</em></p>#}
-{#                                    <div class="social">#}
-{#                                        <ul class="unstyled">#}
-{#                                            <li><a class="facebook" href=""><i class="icon-facebook-sign"></i></a></li>#}
-{#                                            <li><a class="twitter" href=""><i class="icon-twitter-sign"></i></a></li>#}
-{#                                        </ul>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </li>#}
-{#                    </ul>#}
-{#                </div>#}
-{#            </div>#}
         </div>
     </div>
 {% endblock %}

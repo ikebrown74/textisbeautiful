@@ -23,11 +23,13 @@ urlpatterns = patterns('',
     url(r'^create/$', TemplateView.as_view(template_name="create.html"), name="create"),
     url(r'^faq/$', TemplateView.as_view(template_name="faq.html"), name="faq"),
     url(r'^fb_close/$', TemplateView.as_view(template_name="fb_close.html")),
+    url(r'^feedback/$', TemplateView.as_view(template_name="feedback.html"), name="feedback"),
 
     # Dynamic views
-    url(r'^contact/send/$', 'tib.views.contact_email'),
-    url(r'^result/$', 'tib.views.result'),
-    url (r'^result/([\w=-]+)/?$', 'tib.views.status'),
+    url(r'^contact/send/$', 'tib.views.contact_email', name='send_contact'),
+    url(r'^feedback/send/$', 'tib.views.feedback', name='send_feedback'),
+    url(r'^result/$', 'tib.views.result', name='result'),
+    url (r'^result/([\w=%-]+)/$', 'tib.views.status', name='job_status'),
 
     # Blog
     url(r'^blog/', include('zinnia.urls')),

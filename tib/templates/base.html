@@ -46,7 +46,7 @@
         {% block script %}{% endblock %}
     </head>
     <body class="{% block body_class %}{% endblock %}">
-        <a href="https://github.com/rstuart85/textisbeautiful"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1031;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+{#        <a href="https://github.com/rstuart85/textisbeautiful"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1031;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>#}
         <div class="navbar navbar-fixed-top" xmlns="http://www.w3.org/1999/html">
             <div class="navbar-inner">
                 <div class="container">
@@ -64,6 +64,7 @@
                                 {% block nav_faq %}<li><a href="{% url faq %}">FAQ</a></li>{% endblock %}
                                 {% block nav_blog %}<li><a href="/blog/">Blog</a></li>{% endblock %}
                                 {% block nav_create %}<li><a href="{% url create %}">Create</a></li>{% endblock %}
+                                {% block nav_feedback %}<li><a href="{% url feedback %}">Feedback</a></li>{% endblock %}
                                 {% block nav_contact %}<li><a href="{% url contact %}">Contact</a></li>{% endblock %}
                             {% endblock %}
                         </ul>
@@ -111,7 +112,7 @@
             <div class="container">
                 <div class="row">
                     <div class="span12">
-                        <p>&copy; 2012 Kris & Ryan <span id="totop" class="pull-right">Back to Top <i class="icon-arrow-up"></i></span></p>
+                        <p>&copy; 2012 Kris & Ryan. Source code on <a href="https://github.com/rstuart85/textisbeautiful" target="_blank">Github</a>. <span id="totop" class="pull-right">Back to Top <i class="icon-arrow-up"></i></span></p>
                     </div>
                 </div>
             </div>

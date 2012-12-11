@@ -15,3 +15,6 @@ DATA_FOLDER = 'textContent'
 
 # Filestytem
 TEXT_PATH = '/var/tib'
+
+# Amazon
+FEEDBACK_TABLE = 'feedback'

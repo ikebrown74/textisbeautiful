@@ -31,7 +31,7 @@
                 </div>
                 <div class="row">
                     <div class="span12">
-                        <form id="textForm" method="POST" action="/result/">
+                        <form id="textForm" method="POST" action="{% url result %}">
                             {% csrf_token %}
                             <div id="theText" class="control-group">
                                 <textarea class="span9" rows="10" name="text_content"></textarea>
@@ -50,7 +50,7 @@
                 <div class="row">
                     <div class="span12">
                         <p>Haven't got any text? Why not try a <a href="http://en.wikipedia.org/wiki/Main_Page" target="_blank">Wikipedia</a> page instead?</p>
-                        <form id="wikiForm" method="POST" action="/result/">
+                        <form id="wikiForm" method="POST" action="{% url result %}">
                             {% csrf_token %}
                             <div class="control-group">
                                <input type="text" class="span9" name="wiki_url" placeholder="Paste the Wikipedia URL here...">

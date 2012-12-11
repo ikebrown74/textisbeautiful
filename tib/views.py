@@ -5,6 +5,7 @@ import logging
 import os
 import smtplib
 import urllib
+import boto
 from django.conf import settings
 from django.core.mail import mail_admins
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
@@ -13,7 +14,7 @@ import time
 import httplib2
 from tib import html2text
 from tib import utils
-from tib.forms import ContactForm
+from tib.forms import ContactForm, FeedbackForm
 
 logger = logging.getLogger('tib')
 
@@ -114,3 +115,52 @@ def contact_email(request):
                 "email_failed": True,
                 "message": '(err: form validation)'
             })
+
+def feedback(request):
+    """
+    Send email to the site admins
+    """
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            like = form.cleaned_data['like']
+            dislike = form.cleaned_data['dislike']
+            email = form.cleaned_data['email']
+            name = form.cleaned_data['name']
+            conn = boto.connect_dynamodb(
+                aws_access_key_id=settings.AMAZON_KEY_ID,
+                aws_secret_access_key=settings.AMAZON_SECRET_KEY
+            )
+            table = conn.get_table(settings.FEEDBACK_TABLE)
+            data = {
+                'like': like,
+                'dislike': dislike
+            }
+            if name:
+                data['name'] = name
+            if email:
+                data['email'] = email
+            item = table.new_item(
+                hash_key='textisbeautiful.net',
+                range_key=time.mktime(time.gmtime()),
+                attrs=data
+            )
+            try:
+                item.put()
+            except StandardError as err:
+                logger.exception(err)
+                return HttpResponseServerError("Saving feedback failed.")
+            return render(request, 'feedback.html', {
+                'submitted': True
+            })
+        else:
+            return render(request, "feedback.html", {
+                "error": True,
+                "message": '(err: form validation)'
+            })
+    else:
+        return render(request, "contact.html", {
+            "email_attempt": True,
+            "email_failed": True,
+            "message": '(err: form validation)'
+        })

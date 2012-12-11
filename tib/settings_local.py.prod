@@ -15,3 +15,6 @@ DATA_FOLDER = 'tibText'
 
 # Filestytem
 TEXT_PATH = '/mnt/lex4data'
+
+# Amazon
+FEEDBACK_TABLE = 'feedback'

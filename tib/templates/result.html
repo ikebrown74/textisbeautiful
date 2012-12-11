@@ -134,7 +134,7 @@
             });
             var executeAjax = function() {
                 $.ajax({
-                    url: '/result/{{ id }}/',
+                    url: '{% url job_status id %}',
                     dataType: 'json',
                     success: function(data) {
                         $("#run_status").text(data.message);

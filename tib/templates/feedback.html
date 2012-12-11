@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block page_title %}Feedback{% endblock %}
+
+{% block nav_feedback %}<li class="active"><a href="{% url feedback %}">Feedback</a></li>{% endblock %}
+
+{% block body_content %}
+    <div id="header">
+        <div class="container">
+            <div class="row">
+                <div class="span12">
+                    <h1>Feedback</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <div class="container">
+            <div class="row">
+                <div class="span12">
+                    {% if error %}
+                    <div class="alert alert-error fade in">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <strong>Opps, problem!</strong> Unfortunately we couldn't send your email. Maybe try an alternative contact method? {{ message }}
+                    </div>
+                    {% elif success %}
+                    <div class="alert alert-success fade in">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <strong>Success!</strong> Your feedback was submitted! Good times!
+                    </div>
+                    {% endif %}
+                    <p>Have an idea about how the site could be improved? Got a killer feature you really want? Think this site is terrible? Why not leave us some feedback below.</p>
+                    <form class="form-horizontal" method="POST" action="{% url send_feedback %}">
+                        {% csrf_token %}
+                        <div class="control-group">
+                            <label class="control-label" for="inputName">Name</label>
+                            <div class="controls">
+                                <input type="text" name="name" id="inputName" class="input-large" placeholder="Name">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputEmail">Email</label>
+                            <div class="controls">
+                                <input type="text" name="email" id="inputEmail" placeholder="Email">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputLike">What do you like about the site? (required)</label>
+                            <div class="controls">
+                                <textarea id="inputLike" class="span7" name="like" rows="5"></textarea>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputDislike">What do you think could be improved about the site? (required)</label>
+                            <div class="controls">
+                                <textarea id="inputDislike" class="span7" name="dislike" rows="5"></textarea>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <div class="controls">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
