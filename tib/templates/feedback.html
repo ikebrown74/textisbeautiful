@@ -21,7 +21,7 @@
                     {% if error %}
                     <div class="alert alert-error fade in">
                         <button type="button" class="close" data-dismiss="alert">×</button>
-                        <strong>Opps, problem!</strong> Unfortunately we couldn't send your email. Maybe try an alternative contact method? {{ message }}
+                        <strong>Opps, problem!</strong> Unfortunately we couldn't submit your feedback. {{ message }}
                     </div>
                     {% elif success %}
                     <div class="alert alert-success fade in">
@@ -30,7 +30,7 @@
                     </div>
                     {% endif %}
                     <p>Have an idea about how the site could be improved? Got a killer feature you really want? Think this site is terrible? Why not leave us some feedback below.</p>
-                    <form class="form-horizontal" method="POST" action="{% url send_feedback %}">
+                    <form id="feedback_form" class="form-horizontal" method="POST" action="{% url send_feedback %}">
                         {% csrf_token %}
                         <div class="control-group">
                             <label class="control-label" for="inputName">Name</label>
@@ -66,4 +66,26 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block extra_script %}
+    {% if debug %}
+        <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.js"></script>
+    {% else %}
+        <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.min.js"></script>
+    {% endif %}
+    <script>
+        $(document).ready(function (){
+            $('#feedback_form').validate({
+                rules: {
+                    email: {
+                        email: true
+                    },
+                    like: 'required',
+                    dislike: 'required'
+                },
+                errorClass: 'text-error'
+            });
+        });
+    </script>
 {% endblock %}
