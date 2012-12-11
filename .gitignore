@@ -3,4 +3,5 @@
 *.pyc
 local_settings.py
 settings.py
+settings_credentials.py
 settings_local.py
