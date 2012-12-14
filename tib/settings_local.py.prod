@@ -14,7 +14,7 @@ TOP_DATA_FOLDER = 'Server Data0'
 DATA_FOLDER = 'tibText'
 
 # Filestytem
-TEXT_PATH = '/mnt/lex4data'
+TEXT_PATH = '/var/tib'
 
 # Amazon
 FEEDBACK_TABLE = 'feedback'

@@ -19,8 +19,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tib',
-        'USER': '',
-        'PASSWORD': '',
+        'USER': AMAZON_DB_USERNAME,
+        'PASSWORD': AMAZON_DB_PASSWORD,
         'HOST': 'tib-django-backend.coc46ehb078z.us-east-1.rds.amazonaws.com',
         'PORT': '3306',
     }
@@ -40,8 +40,8 @@ SITE_ID = 1
 
 # Email settings
 EMAIL_HOST = 'email-smtp.us-east-1.amazonaws.com'
-EMAIL_HOST_USER = 'tibemail'
-EMAIL_HOST_PASSWORD = 'fillmein'
+EMAIL_HOST_USER = AMAZON_EMAIL_USERNAME
+EMAIL_HOST_PASSWORD = AMAZON_EMAIL_PASSWORD
 EMAIL_USE_TLS = True
 EMAIL_SUBJECT_PREFIX = "[TIB Contact]"
 SERVER_EMAIL = "webmaster@textisbeautiful.net"
@@ -152,6 +152,9 @@ INSTALLED_APPS = (
     'zinnia',
     'gunicorn',
 )
+
+# Turn of WYSIWYG editor because it is shit and uses iFrames.
+ZINNIA_WYSIWYG = None
 
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
