@@ -58,12 +58,25 @@ tib.vis.Manager = function () {
          * Get PNG data url for the current visualisation.
          */
         getPNG : function () {
+            
+            // Create canvas
             var canvas = document.createElement("canvas");
             canvas.width = currentVis.width;
             canvas.height = currentVis.height;
+            
+            // Write svg objects to canvas
             var ctx = canvas.getContext('2d');
             ctx.drawSvg(tib.util.getSVG(drawTarget), 0, 0);
-            return canvas.toDataURL();
+     
+            // Draw background behind objects for a global background colour
+            var compositeOperation = ctx.globalCompositeOperation;
+            ctx.globalCompositeOperation = "destination-over";
+            ctx.fillStyle = $('#'+drawTarget).find('svg').css('background-color');
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            var data = canvas.toDataURL();
+            delete canvas;
+            return data
         },
         
         /**

@@ -29,6 +29,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         'Balanced' : [10, -15, 15],
         'Messy' : [12, -60, 60],
         'Vertical' : [0, -90, 90],
+        'Vertical + Horizontal' : [2, -90, 0],
         'Madness' : [36, -180, 180]
     };
 
@@ -43,7 +44,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     this.italic = false;
     this.fill = d3.scale.category20();
     this.font = 'Trebuchet MS';
-    this.fontSize = d3.scale.pow().range([8, 160]);
+    this.fontSize = d3.scale.pow().range([8, 140]);
     this.mode = 'Archimedean';
     this.orientation = ORIENTATIONS['Horizontal'];
     this.scaleType = 'Automatic';
@@ -197,6 +198,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         $('#vis-menu .cloud-menu').remove();
         $('#vis-help .cloud-help').remove();
         $('#vis-types li').removeClass('active');
+        $('#' + self.drawTarget).css("background-color", '');
     };
 
     /**
