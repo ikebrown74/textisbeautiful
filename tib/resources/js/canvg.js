@@ -527,8 +527,8 @@
 					this.transforms[i].applyToPoint(p);
 				}
 			}
-			
-			var data = svg.trim(svg.compressSpaces(v)).split(/\s(?=[a-z])/);
+
+			var data = svg.trim(svg.compressSpaces(v)).split(/[\s|\s?,\s?](?=[a-z])/);
 			for (var i=0; i<data.length; i++) {
 				var type = data[i].split('(')[0];
 				var s = data[i].split('(')[1].replace(')','');
