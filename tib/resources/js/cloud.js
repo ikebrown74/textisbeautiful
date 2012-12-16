@@ -197,6 +197,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         $('#vis-menu .cloud-menu').remove();
         $('#vis-help .cloud-help').remove();
         $('#vis-types li').removeClass('active');
+        $('#' + self.drawTarget).css("background-color", '');
     };
 
     /**
