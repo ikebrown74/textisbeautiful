@@ -234,7 +234,7 @@ tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
                     // flip the word
                     rotate += 180;
                 }
-                t += " rotate("  + rotate + ")";
+                t += ",rotate("  + rotate + ")";
                 
                 return t; 
             })
