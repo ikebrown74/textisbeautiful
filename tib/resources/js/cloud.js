@@ -350,7 +350,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
                     .attr("text-anchor", "middle")
                     .attr("transform", function(d) {
                         var coords = getWordCoords(d);
-                        return "translate(" + coords.x + ", " + coords.y + ")rotate(" + (self.webMode ? 0 : d.rotate) + ")";
+                        return "translate(" + coords.x + ", " + coords.y + "),rotate(" + (self.webMode ? 0 : d.rotate) + ")";
                     })
                     .text(function(d) { return d.text; });
         
