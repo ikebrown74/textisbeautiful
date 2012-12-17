@@ -6,8 +6,8 @@
         text = cloudText,
         font = cloudFont,
         fontSize = cloudFontSize,
-        fontStyle = cloudfontStyle,
-        fontWeight = cloudFontWeight,
+        fontStyle = cloudFontNormal,
+        fontWeight = cloudFontNormal,
         rotate = cloudRotate,
         padding = cloudPadding,
         spiral = archimedeanSpiral,
@@ -27,8 +27,8 @@
         return {
           text: text.call(this, d, i),
           font: font.call(this, d, i),
-          fontStyle: fontStyle.call(this, d, i),
-          fontWeight: fontWeight.call(this, d, i),
+          style: fontStyle.call(this, d, i),
+          weight: fontWeight.call(this, d, i),
           rotate: rotate.call(this, d, i),
           size: ~~fontSize.call(this, d, i),
           padding: cloudPadding.call(this, d, i)
@@ -46,8 +46,10 @@
             d;
         while (+new Date - start < timeInterval && ++i < n && timer) {
           d = data[i];
-          d.x = (size[0] * (Math.random() + .5)) >> 1;
-          d.y = (size[1] * (Math.random() + .5)) >> 1;
+          // Decreasing placement bounds here to ensure tight packing
+          // TODO: Dynamic calculation of range
+          d.x = ((size[0]/2 * (Math.random() + .5)) >> 1) + size[0]/4;
+          d.y = ((size[1]/2 * (Math.random() + .5)) >> 1) + size[1]/4;
           cloudSprite(d, data, i);
           if (place(board, d, bounds)) {
             tags.push(d);
@@ -127,6 +129,7 @@
           }
         }
       }
+
       return false;
     }
 
@@ -147,17 +150,17 @@
       font = d3.functor(x);
       return cloud;
     };
-    
-    cloud.fontStyle = function (x) {
-        if (!arguments.length) return fontStyle;
-        fontStyle = d3.functor(x);
-        return cloud;
+
+    cloud.fontStyle = function(x) {
+      if (!arguments.length) return fontStyle;
+      fontStyle = d3.functor(x);
+      return cloud;
     };
-    
+
     cloud.fontWeight = function(x) {
-        if (!arguments.length) return fontWeight;
-        fontWeight = d3.functor(x);
-        return cloud;
+      if (!arguments.length) return fontWeight;
+      fontWeight = d3.functor(x);
+      return cloud;
     };
 
     cloud.rotate = function(x) {
@@ -200,13 +203,9 @@
   function cloudFont() {
     return "serif";
   }
-  
-  function cloudfontStyle() {
-    return "";
-  }
-  
-  function cloudFontWeight() {
-    return "normal;"
+
+  function cloudFontNormal() {
+    return "normal";
   }
 
   function cloudFontSize(d) {
@@ -234,7 +233,7 @@
     while (++di < n) {
       d = data[di];
       c.save();
-      c.font =  d.fontStyle + " " + d.fontWeight + " " + ~~((d.size + 1) / ratio) + "px " + d.font;
+      c.font = d.style + " " + d.weight + " " + ~~((d.size + 1) / ratio) + "px " + d.font;
       var w = c.measureText(d.text + "m").width * ratio,
           h = d.size << 1;
       if (d.rotate) {
