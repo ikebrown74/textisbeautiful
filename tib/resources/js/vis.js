@@ -71,7 +71,7 @@ tib.vis.Manager = function () {
             // Draw background behind objects for a global background colour
             var compositeOperation = ctx.globalCompositeOperation;
             ctx.globalCompositeOperation = "destination-over";
-            ctx.fillStyle = $('#'+drawTarget).find('svg').css('background-color');
+            ctx.fillStyle = $('#'+drawTarget).css('background-color');
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             var data = canvas.toDataURL();
