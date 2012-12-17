@@ -15,8 +15,11 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     var TEXT_SCALE = {
         EXP_MAX: 2.00,
         EXP_MIN: 0.80,
+        FONT_SIZE_MIN: 8,
+        FONT_SIZE_MAX: 160,
+        FONT_SIZE_FLOOR: 50,
         MEAN_FACTOR_THRESH: 0.60,
-        OPTIONS: ['Automatic', 'Linear', 'Exponential', 'Square Root'],
+        OPTIONS: ['Automatic', 'Square Root', 'Linear', 'Exponential'],
         RANGE_FACTOR_THRESH: 0.10,
         RANGE_LOWER_THRESH: 100,
         RANGE_UPPER_THRESH: 330
@@ -44,7 +47,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
     this.italic = false;
     this.fill = d3.scale.category20();
     this.font = 'Trebuchet MS';
-    this.fontSize = d3.scale.pow().range([8, 140]);
+    this.fontSize = d3.scale.pow();
     this.mode = 'Archimedean';
     this.orientation = ORIENTATIONS['Horizontal'];
     this.scaleType = 'Automatic';
@@ -336,7 +339,6 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
             self.renderedWords[w.text] = w; 
         });
         
-        self.selector = d3.select('#' + self.drawTarget).append("svg");
         self.selector.attr("width", self.width)
             .attr("height", self.height)
             .append("g")
@@ -387,6 +389,7 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         if (self.selector) {
             self.selector.remove();
         }
+        self.selector = d3.select('#' + self.drawTarget).append("svg");
         
         switch (self.scaleType) {
             case 'Automatic':
@@ -403,15 +406,47 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
                 break;
         }
         
+        // Check if any words are too big to fit on the board and reduce maximum font size accordingly
+        self.fontSize.range([TEXT_SCALE.FONT_SIZE_MIN, TEXT_SCALE.FONT_SIZE_MAX]);
+        var textRuler = $('<span></span>').css({'font-family' : self.font, 'visibility' : 'hidden'});
+        $('body').append(textRuler);
+        var resizing = true;
+        for (var i = 0; i < self.words.length && resizing; i++) {
+            
+            // Calculate word size
+            var w = self.words[i];
+            textRuler.css('font-size', self.fontSize(w.size) + 'px');
+            if (self.bold) {
+                textRuler.css('font-weight', 'bold');
+            }
+            if (self.italic) {
+                textRuler.css('font-style', 'italic');
+            }
+            textRuler.text(w.text);
+            var realSize =  $(textRuler).width();
+            while (realSize > self.width * 0.95 || (self.orientation != ORIENTATIONS['Horizontal'] && realSize > self.height * 0.95)) {
+                var range = self.fontSize.range();
+                if (range[1] <= TEXT_SCALE.FONT_SIZE_MAX_FLOOR) {
+                    // Hit floor, stop resizing now
+                    resizing = false;
+                    break;
+                }
+                
+                // Adjust font size range & recalculate word size
+                range[1] = range[1] - 10;
+                self.fontSize.range(range);
+                realSize = textRuler.css('font-size', self.fontSize(w.size)).width();
+            }
+        }
+        textRuler.remove();
         
-        var scale = d3.scale.linear().domain([0, self.orientation[0] - 1]).range([self.orientation[1], self.orientation[2]]);
-
+        var rotation = d3.scale.linear().domain([0, self.orientation[0] - 1]).range([self.orientation[1], self.orientation[2]]);
         self.layout = d3.layout.cloud().size([self.width, self.height])
             .words(self.words)
-            .rotate(function() { return scale(~~(Math.random() * self.orientation[0])); })
+            .rotate(function() { return rotation(~~(Math.random() * self.orientation[0])); })
             .spiral(self.mode.toLowerCase())
             .font(self.font)
-            .fontSize(function(d) { return self.fontSize(+d.size); })
+            .fontSize(function(d) { return self.fontSize(d.size); })
             .fontStyle(self.italic ? 'italic' : '')
             .fontWeight(self.bold ? 'bold' : 'normal')
             .on("end", drawWords)
