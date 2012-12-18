@@ -161,17 +161,19 @@ def get_concepts(markers_xml):
         if marker.tag == 'markers':
             num_blocks = marker.attrib['cbcount']
             for entity in marker:
-                entities[int(entity.attrib['id'])] = {
+                e = {
                     'id': int(entity.attrib['id']),
                     'weight': float(entity.attrib['ctv']),
                     'frequency': int(entity.attrib['freq']),
                     'mstEdges': [],
                     'value': entity.attrib['value'],
                     'kind': entity.attrib['kind'],
-                    'themeId': entity.attrib['tid'],
                     'x': float(entity.attrib['x']),
                     'y': float(entity.attrib['y'])
                 }
+                if 'tid' in entity.attrib.keys():
+                    e['themeId'] = entity.attrib['tid']
+                entities[int(entity.attrib['id'])] = e
                 for rels in entity:
                     related = []
                     for rel in rels:

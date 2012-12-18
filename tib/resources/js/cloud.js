@@ -73,14 +73,17 @@ tib.vis.ConceptCloud = function ConceptCloud (config, data) {
         for (var id in data.markers.concepts) {
             
             var w = data.markers.concepts[id];
-            words.push(word = {
+            word = {
                 edges: w.mstEdges,
                 //size: Math.log(w.frequency),
                 size: parseInt(w.weight, 10),
-                text: w.value,
-                themeId: w.themeId,
-                themeConnectivity: data.markers.themes[w.themeId].connectivity
-            });
+                text: w.value                
+            };
+            if (w.themeId) {
+                word.themeId = w.themeId;
+                word.themeConnectivity = data.markers.themes[w.themeId].connectivity;
+            }
+            words.push(word);
             
             totalSize += word.size;
             
