@@ -33,6 +33,9 @@ def result(request):
             # Wikipedia link
             url = request.POST['wiki_url']
             if 'wikipedia.org/wiki/' in url:
+                url = url.replace('https://', 'http://')
+                if not url.startswith('http://'):
+                    url = 'http://' + url
                 resp, content = httplib2.Http().request(url, headers={'User-Agent':'textisbeautiful.net/1.0'})
                 text = html2text.html2text(content.decode('utf-8', url))
             else:
