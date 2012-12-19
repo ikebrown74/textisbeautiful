@@ -21,7 +21,7 @@ DATABASES = {
         'NAME': 'tib',
         'USER': AMAZON_DB_USERNAME,
         'PASSWORD': AMAZON_DB_PASSWORD,
-        'HOST': 'tib-django-backend.coc46ehb078z.us-east-1.rds.amazonaws.com',
+        'HOST': 'tib-django-restore.coc46ehb078z.us-east-1.rds.amazonaws.com',
         'PORT': '3306',
     }
 }
