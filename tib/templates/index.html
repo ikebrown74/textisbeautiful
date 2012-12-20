@@ -10,7 +10,7 @@
                         <p>Got an interesting piece of text you want to showcase? Looking for an innovative way to present some text to its audience? Want to get further insights into your text? Just like cool visualisations? Welcome!</p>
                         <p><a href="/faq/" class="btn btn-success btn-action">Read the FAQ</a> <a href="/create/" class="btn btn-primary btn-action">Make Text Beautiful Now&nbsp;&nbsp;<i class="icon-chevron-right icon-white"></i></a></p>
                         <div id="badIE" class="alert" style="display:none;">
-                            <strong>Warning!</strong> It appears you are using an old version of IE. This website only works with version 9 or above of IE. Either upgrade your version of IE or use a more modern browser (<a href="http://www.google.com/chrome" target="_blank">Chrome</a> or <a href="http://www.mozilla.org/en-US/firefox/new/" target="_blank">Firefox</a> to name but a few).
+                            <strong>Warning!</strong> Unfortunately this website does not currently work with Internet Explorer. Please use an alternative browser (<a href="http://www.google.com/chrome" target="_blank">Chrome</a>, <a href="http://www.apple.com/safari/" target="_blank">Safari</a> or <a href="http://www.mozilla.org/en-US/firefox/new/" target="_blank">Firefox</a>).
                         </div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
         <script>
             $(document).ready(function() {
                 // IE Sucks!
-                if ($.browser.msie && parseInt($.browser.version, 10) <= 8) {
+                if ($.browser.msie) {
                     $("#badIE").css('display', 'block');
                 }
             })
