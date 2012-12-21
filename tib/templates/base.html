@@ -57,6 +57,9 @@
                     </div>
                 </div>
             </div>
+            <div id="badIE" class="alert alert-info" style="display:none;">
+                <i class="icon-warning-sign"></i> Unfortunately this website does not currently support Internet Explorer. We hope to soon. For now, please use an alternative browser (<a href="http://www.google.com/chrome" target="_blank">Chrome</a>, <a href="http://www.apple.com/safari/" target="_blank">Safari</a> or <a href="http://www.mozilla.org/en-US/firefox/new/" target="_blank">Firefox</a>).
+            </div>
         </div>
 
         {% block  body_content %}{% endblock %}
@@ -116,6 +119,10 @@
                     }, 300);
                     return false;
                 });
+                // IE eats babies
+                if ($.browser.msie) {
+                    $("#badIE").css('display', 'block');
+                }
             });
         </script>
         {% if not debug %}
