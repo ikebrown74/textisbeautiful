@@ -73,10 +73,10 @@ MEDIA_URL = ''
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'static').replace('\\', '/')
 
 # Used for versioning on Amazon CloudFront
-STATIC_VERSION_ID='1'
+STATIC_VERSION_ID='2'
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = 'http://media.textisbeautiful.net/{0}/'.format(STATIC_VERSION_ID)
+STATIC_URL = 'http://cdn.textisbeautiful.net/{0}/'.format(STATIC_VERSION_ID)
 
 # Additional locations of static files
 STATICFILES_DIRS = (
