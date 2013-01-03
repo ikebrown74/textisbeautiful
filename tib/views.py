@@ -37,7 +37,7 @@ def result(request):
                 if not url.startswith('http://'):
                     url = 'http://' + url
                 resp, content = httplib2.Http().request(url, headers={'User-Agent':'textisbeautiful.net/1.0'})
-                text = html2text.html2text(content.decode('utf-8', url))
+                text = html2text.html2text(content.decode('utf-8'))
             else:
                 return render(request, 'create.html', {'wiki_error': True})
         # Unique ID for this search uses current time and the text
