@@ -95,10 +95,10 @@ def contact_email(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            subject = form.cleaned_data['subject']
-            message = form.cleaned_data['message']
+            subject = form.cleaned_data['subject'].encode('ascii', 'ignore')
+            message = form.cleaned_data['message'].encode('ascii', 'ignore')
             email = form.cleaned_data['email']
-            name = form.cleaned_data['name']
+            name = form.cleaned_data['name'].encode('ascii', 'ignore')
             try:
                 mail_admins(subject, 'From: {0}\nEmail: {1}\nMessage:\n\n{2}'.format(name, email, message))
                 return render(request, "contact.html", {
