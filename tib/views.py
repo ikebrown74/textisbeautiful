@@ -37,7 +37,7 @@ def result(request):
                 if not url.startswith('http://'):
                     url = 'http://' + url
                 resp, content = httplib2.Http().request(url, headers={'User-Agent':'textisbeautiful.net/1.0'})
-                text = html2text.html2text(content.decode('utf-8', url))
+                text = html2text.html2text(content.decode('utf-8'))
             else:
                 return render(request, 'create.html', {'wiki_error': True})
         # Unique ID for this search uses current time and the text
@@ -95,10 +95,10 @@ def contact_email(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            subject = form.cleaned_data['subject']
-            message = form.cleaned_data['message']
+            subject = form.cleaned_data['subject'].encode('ascii', 'ignore')
+            message = form.cleaned_data['message'].encode('ascii', 'ignore')
             email = form.cleaned_data['email']
-            name = form.cleaned_data['name']
+            name = form.cleaned_data['name'].encode('ascii', 'ignore')
             try:
                 mail_admins(subject, 'From: {0}\nEmail: {1}\nMessage:\n\n{2}'.format(name, email, message))
                 return render(request, "contact.html", {
