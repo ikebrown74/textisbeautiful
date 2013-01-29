@@ -7,8 +7,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="author" content="K & R Consultants">
         {% block meta %}
-            <meta name="description" content="{% block meta-description %}Got an interesting piece of text you want to showcase? Looking for an innovative way to present some text to its audience? Want to get further insights into your text? Just like cool visualisations? TextIsBeautiful.net is the place for you.{% endblock %}" />
-            <meta name="keywords" content="text analytics, word cloud, concept cloud, concept web, correlation wheel, info graphics, visualisations, text, concepts, leximancer, wordle">
+        <meta name="description" content="{% block meta-description %}Got an interesting piece of text you want to showcase? Looking for an innovative way to present some text to its audience? Want to get further insights into your text? Just like cool visualisations? TextIsBeautiful.net is the place for you.{% endblock %}" />
+        <meta name="keywords" content="text analytics, word cloud, concept cloud, concept web, correlation wheel, info graphics, visualisations, text, concepts, leximancer, wordle">
         {% endblock %}
         <link rel="home" href="http://textisbeautiful.net" />
         <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
@@ -16,13 +16,13 @@
         <link href="{{ STATIC_URL }}css/font-awesome.css" rel="stylesheet">
         <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
         <!--[if lt IE 8]>
-              <link href="{{ STATIC_URL }}css/font-awesome-ie7.css" rel="stylesheet">
-            <![endif]-->
+        <link href="{{ STATIC_URL }}css/font-awesome-ie7.css" rel="stylesheet">
+        <![endif]-->
         <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet">
         <link href="{{ STATIC_URL }}css/blue.css" rel="stylesheet">
         <!--[if lt IE 9]>
-              <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-            <![endif]-->
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
         <link rel="shortcut icon" href="{{ STATIC_URL }}img/ico/favicon.ico">
         <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ STATIC_URL }}img/ico/favicon.ico">
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ STATIC_URL }}img/ico/favicon.ico">
@@ -32,7 +32,6 @@
         {% block script %}{% endblock %}
     </head>
     <body class="{% block body_class %}{% endblock %}">
-{#        <a href="https://github.com/rstuart85/textisbeautiful"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1031;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>#}
         <div class="navbar navbar-fixed-top" xmlns="http://www.w3.org/1999/html">
             <div class="navbar-inner">
                 <div class="container">
@@ -45,20 +44,20 @@
                     <div class="nav-collapse collapse">
                         <ul class="nav pull-right">
                             {% block menu_items %}
-                                {% block nav_home %}<li><a href="{% url home %}">Home</a></li>{% endblock %}
-                                {% block nav_about %}<li><a href="{% url about %}">About</a></li>{% endblock %}
-                                {% block nav_faq %}<li><a href="{% url faq %}">FAQ</a></li>{% endblock %}
-                                {% block nav_blog %}<li><a href="/blog/">Blog</a></li>{% endblock %}
-                                {% block nav_create %}<li><a href="{% url create %}">Create</a></li>{% endblock %}
-                                {% block nav_feedback %}<li><a href="{% url feedback %}">Feedback</a></li>{% endblock %}
-                                {% block nav_contact %}<li><a href="{% url contact %}">Contact</a></li>{% endblock %}
+                            {% block nav_home %}<li><a href="{% url home %}">Home</a></li>{% endblock %}
+                            {% block nav_about %}<li><a href="{% url about %}">About</a></li>{% endblock %}
+                            {% block nav_faq %}<li><a href="{% url faq %}">FAQ</a></li>{% endblock %}
+                            {% block nav_blog %}<li><a href="/blog/">Blog</a></li>{% endblock %}
+                            {% block nav_create %}<li><a href="{% url create %}">Create</a></li>{% endblock %}
+                            {% block nav_feedback %}<li><a href="{% url feedback %}">Feedback</a></li>{% endblock %}
+                            {% block nav_contact %}<li><a href="{% url contact %}">Contact</a></li>{% endblock %}
                             {% endblock %}
                         </ul>
                     </div>
                 </div>
             </div>
             <div id="badIE" class="alert alert-error txt-middle" style="display:none;">
-                <i class="icon-warning-sign"></i> Unfortunately this website does not currently support Internet Explorer. We hope to soon. For now, please use an alternative browser (<a href="http://www.google.com/chrome" target="_blank">Chrome</a>, <a href="http://www.apple.com/safari/" target="_blank">Safari</a> or <a href="http://www.mozilla.org/en-US/firefox/new/" target="_blank">Firefox</a>).
+                <i class="icon-warning-sign"></i> Unfortunately this website does not currently support Internet Explorer 8 or lower. Please use an alternative browser (<a href="http://www.google.com/chrome" target="_blank">Chrome</a>, <a href="http://www.apple.com/safari/" target="_blank">Safari</a> or <a href="http://www.mozilla.org/en-US/firefox/new/" target="_blank">Firefox</a>).
             </div>
         </div>
 
@@ -109,49 +108,49 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/jquery-1.8.2.min.js"><\/script>')</script>
-        <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-        <script>
-            $(document).ready(function(){
-                $("[rel=tooltip]").tooltip();
-                $("#totop").click(function () {
-                    $("body, html").animate({
-                        scrollTop: 0
-                    }, 300);
-                    return false;
+            <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+            <script>
+                $(document).ready(function(){
+                    $("[rel=tooltip]").tooltip();
+                    $("#totop").click(function () {
+                        $("body, html").animate({
+                            scrollTop: 0
+                        }, 300);
+                        return false;
+                    });
+                    // IE eats babies
+                    if ($.browser.msie && parseInt($.browser.version, 10) < 9) {
+                        $("#badIE").css('display', 'block');
+                    }
                 });
-                // IE eats babies
-                if ($.browser.msie) {
-                    $("#badIE").css('display', 'block');
-                }
-            });
-        </script>
-        {% if not debug %}
-        <script type="text/javascript">
-            var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', 'UA-36545610-1']);
-            _gaq.push(['_setDomainName', 'textisbeautiful.net']);
-            _gaq.push(['_setAllowLinker', true]);
-            _gaq.push(['_trackPageview']);
-            (function() {
-                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-            })();
-        </script>
-        <script type="text/javascript">
-            var _gauges = _gauges || [];
-            (function() {
-                var t   = document.createElement('script');
-                t.type  = 'text/javascript';
-                t.async = true;
-                t.id    = 'gauges-tracker';
-                t.setAttribute('data-site-id', '50d28757613f5d1d9e000009');
-                t.src = '//secure.gaug.es/track.js';
-                var s = document.getElementsByTagName('script')[0];
-                s.parentNode.insertBefore(t, s);
-            })();
-        </script>
-        {% endif %}
-        {% block extra_script %}{% endblock %}
+            </script>
+            {% if not debug %}
+            <script type="text/javascript">
+                var _gaq = _gaq || [];
+                _gaq.push(['_setAccount', 'UA-36545610-1']);
+                _gaq.push(['_setDomainName', 'textisbeautiful.net']);
+                _gaq.push(['_setAllowLinker', true]);
+                _gaq.push(['_trackPageview']);
+                (function() {
+                 var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                 ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                 })();
+</script>
+<script type="text/javascript">
+    var _gauges = _gauges || [];
+    (function() {
+     var t   = document.createElement('script');
+     t.type  = 'text/javascript';
+     t.async = true;
+     t.id    = 'gauges-tracker';
+     t.setAttribute('data-site-id', '50d28757613f5d1d9e000009');
+     t.src = '//secure.gaug.es/track.js';
+     var s = document.getElementsByTagName('script')[0];
+     s.parentNode.insertBefore(t, s);
+     })();
+</script>
+{% endif %}
+{% block extra_script %}{% endblock %}
     </body>
 </html>
