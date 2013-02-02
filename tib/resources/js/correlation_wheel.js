@@ -300,10 +300,10 @@ tib.vis.CorrelationWheel = function CorrelationWheel(config, data) {
         $('#vis-help .modal-body').empty();
         // Place to inject
         var modal = '<h3>Correlation Wheel</h3>'+
-                    '<p>You can use the correlation wheel to visualise which concepts are highly correlated with eachother. Two concepts are highly correlated if they appear together in the text often and appear apart rarely. The correlation is symmetric.</p>'+
+                    '<p>You can use the correlation wheel to visualise which concepts are highly correlated with each other. Two concepts are highly correlated if they appear together in the text often and appear apart rarely. The correlation is symmetric.</p>'+
                     '<p>This means that concepts which appear large in the Concept Web will most likely not be highly correlated with any concepts. </p>'+
-                    '<p>Consider the concept Alice in the sotry Alice In Wonderland. Alice appears with a wide range of concepts throught the story. Alice isn\'t highly correlated with any one concept - it apears frequently with a wide range of concepts.</p>' +
-                    '<p>You can use this visualisation to identify underlying themes in your text. In text about Economics, supply and demand are highly correlated. In text about Winston Churchill, the concepts election and campaign along with election and won are highly correlated. These relationships can help you better understand your text.</p>';
+                    '<p>Consider the concept Alice in the story Alice In Wonderland. Alice appears with a wide range of concepts throughout the story. Alice isn\'t highly correlated with any one concept - it appears frequently with a wide range of concepts.</p>' +
+                    '<p>You can use this visualisation to identify underlying themes in your text. In a text corpus about Economics, supply and demand are highly correlated. Similarly for Winston Churchill, the concepts election and campaign along with election and won are highly correlated. These relationships can help you better understand your text.</p>';
         $('#vis-help .modal-body').append(modal);
     };
 
