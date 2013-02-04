@@ -32,6 +32,7 @@
                         <li><a href="#2_3">Can I download the visualisation I created as an image?</a></li>
                         <li><a href="#2_4">Can I share it using &lt;insert social network name here&gt;?</a></li>
                         <li><a href="#2_5">Can you make it available as a web service?</a></li>
+                        <li><a href="#2_6">Do you support languages other than English?</a></li>
                     </ul>
                 </div>
             </div>
@@ -41,19 +42,19 @@
                     <h2>General</h2>
                     <h4 id="1_1">Who are you?</h4>
                     <p>Our names are Kris and Ryan. We are software engineers from Australia.</p>
-                    <h4 id="#1_2">Why did you make this site?</h4>
+                    <h4 id="1_2">Why did you make this site?</h4>
                     <p>We have been long time admirers of Wordle. We both also work (at time of writing) for an Australian text analytics company called <a href="http://leximancer.com" target="_blank">Leximancer</a>. We have yearned for a Wordle that uses modern text analytics in its visualisation instead of just word frequency to help understand the text while also making it pretty. We also thought there might be other visualisations that could help achieve this goal. Towards the end of 2012 all of the relevant technologies seemed to exist, so we took the plunge and this is the result.</p>
-                    <h4 id="#1_3">Will this site remain free?</h4>
+                    <h4 id="1_3">Will this site remain free?</h4>
                     <p>In short, yes. The longer answer is that it is extremely unlikely that we will reduce the number of features that are free. In fact, we are more likely to increase them. But we also haven't ruled out providing premium features.</p>
-                    <h4 id="#1_4">Are you interested in a partnership/business/licensing deal?</h4>
-                    <p>Possibly. We definitely aren't steadfastly against it. Try <a href="{% url contact %}">contacting us</a> directly or contacting <a href="http://leximancer.com" target="_blank">Leximancer</a>.</p>
+                    <h4 id="1_4">Are you interested in a partnership/business/licensing deal?</h4>
+                    <p>Possibly. We definitely aren't steadfastly against it. Try <a href="{% url contact %}">contacting us</a>.</p>
                     <h2>Technical</h2>
                     <h4 id="2_1">How are you different to Wordle?</h4>
                     <p>Wordle takes your words and turns it into what most consider to be art. It creates stunning visuals that are great to look it. It does this by using word frequency - counting words. Much more advanced textual analytics are presently available. They vary wildly in their approach from using hardcoded/fixed taxonomies to completely automatic solutions based on observed statistics.</p>
                     <p>We thought it would be great to use some of the recent innovations in text analytics together with advances in web technologies to put together a modern text visualisation website. A site that is based entirely on modern web technologies and text analytics (provided by Leximancer in this case).</p>
                     <p>There are a few key differences between textisbeautiful.net (TIB) and wordle.net (Wordle). Firstly, TIB deals in concepts, not words. A concept is a collection of words that is automatically discovered from the text. This is at the crux of what Leximancer does. You should take the time to read the <a href="https://www.leximancer.com/science/" target="_blank">white paper published by Leximancer</a> for a more detailed explanation of this idea.</p>
                     <p>Additionally, TIB provides  more visualisations than just the concept cloud (our concept cloud is visually similar to the Wordle output but uses more advanced text analytics underneath). Our concept cloud uses colour coding to convey relatedness between concepts (concepts that have the same colour are closely related) and also provides an exploded view (concept web) that uses positioning as well as colour. We also provide other visualisations and we hope to add more as we go. We even hope to open up the ability to add visualisations to the site so users can participate.</p>
-                    <h4 id="#2_2">Err, a concept? Say what?</h4>
+                    <h4 id="2_2">Err, a concept? Say what?</h4>
                     <p>A lot of people struggle with the difference between a word and a concept. Leximancer provides a lot of material on their website about their software. Take the time to look through it. But in the spirit of trying to give you a quick understanding, here is a rudimentary example:</p>
                     <p>Lets suppose you are reading <a href="http://www.gutenberg.org/cache/epub/11/pg11.txt">Alice in Wonderland</a>. This is the Wordle for the Alice in Wonderland book:</p>
                     <div class="span12" style="text-align: center; padding-bottom: 7px;">
@@ -70,12 +71,14 @@
                         <img src="{{ STATIC_URL }}img/alice_web_faq.png" class="img-polaroid">
                     </div>
                     <p>Remember, this is just two of an ever increasing number of visualisations available. Go check the rest out for yourself, they all come with a detailed description.</p>
-                    <h4 id="#2_3">Can I download the visualisation I created as an image?</h4>
+                    <h4 id="2_3">Can I download the visualisation I created as an image?</h4>
                     <p>Yes, you certainly can. In fact, we encourage it. Download the image, share it, use it in your work. Although attribution isn't required, it is definitely appreciated. The images generated by this site are covered by the <a href="http://creativecommons.org/licenses/by/3.0/deed.en_US" target="_blank">Creative Commons Attribution 3.0 Unported License</a>.</p>
-                    <h4 id="#2_4">Can I share it using &lt;insert social network name here&gt;?</h4>
+                    <h4 id="2_4">Can I share it using &lt;insert social network name here&gt;?</h4>
                     <p>We have built in support for Twitter, Google+ and Facebook. You can share it anywhere else you like by downloading the image directly from here and sharing it wherever you like.</p>
-                    <h4 id="#2_5">Can you make it available as a web service?</h4>
+                    <h4 id="2_5">Can you make it available as a web service?</h4>
                     <p>Possibly, it's something we will consider in the future. It might not be a free service though. If you really want to make your own visualisations like we have done here then you should contact Leximancer and get access to their software. This website is open source but Leximancer is a commercial product.</p>
+                    <h4 id="2_6">Do you support languages other than English?</h4>
+                    <p>Not yet, but we hope to very soon! Stay tuned for announcements on our blog!</p>
                 </div>
             </div>
         </div>
