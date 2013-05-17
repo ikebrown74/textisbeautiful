@@ -6,3 +6,4 @@ settings.py
 settings_credentials.py
 settings_local.py
 tib/static
+.idea

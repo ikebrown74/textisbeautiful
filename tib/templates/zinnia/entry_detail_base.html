@@ -25,8 +25,6 @@
         href="{% url 'zinnia_entry_comment_feed' year month day object.slug %}" />
   <link rel="alternate" type="application/rss+xml" title="{% trans "RSS Feed of pingbacks on" %} '{{ object.title }}'"
         href="{% url 'zinnia_entry_pingback_feed' year month day object.slug %}" />
-  <link rel="alternate" type="application/rss+xml" title="{% trans "RSS Feed of trackbacks on" %} '{{ object.title }}'"
-        href="{% url 'zinnia_entry_trackback_feed' year month day object.slug %}" />
   {% endwith %}
 {% endblock %}
 
@@ -178,42 +176,6 @@
     {% endif %}
   {% endwith %}
 </section>
-{% endblock %}
-
-{% block entry-trackbacks %}
-{% with trackback_list=object.trackbacks %}
-{% if trackback_list.count or object.pingback_enabled %}
-<hr>
-<section id="trackbacks">
-  <h3>{% trans "Trackbacks" %}</h3>
-  {% if trackback_list.count %}
-  <ol id="trackback-list">
-    {% for trackback in trackback_list %}
-    <li id="trackback_{{ trackback.pk }}" class="trackback vcard {% cycle box1,box2 %}">
-      <p class="trackback-info">
-	<a href="{{ trackback.url }}" rel="external nofollow"
-           class="fn url org">{{ trackback.user_name }}</a>
-	{% trans "on" %}
-        <abbr class="trackback-published" title="{{ trackback.submit_date|date:"c" }}">
-          {{ trackback.submit_date|date:"SHORT_DATETIME_FORMAT" }}
-        </abbr>
-      </p>
-      <p class="trackback-content">
-	{{ trackback.comment }}
-      </p>
-    </li>
-    {% endfor %}
-  </ol>
-  {% endif %}
-    {% if object.pingback_enabled %}
-  <p>
-    <a href="{% url 'zinnia_entry_trackback' object.pk %}" rel="trackback">
-      {% trans "Trackback URL" %}</a>
-  </p>
-    {% endif %}
-</section>
-{% endif %}
-{% endwith %}
 {% endblock %}
 
 {% block entry-comments-form %}
