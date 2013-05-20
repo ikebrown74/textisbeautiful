@@ -26,6 +26,9 @@
                                 <strong>Error!</strong> That doesn't look like a Wikipedia URL to us. Apologies if we have it wrong.
                             </div>
                         {% endif %}
+                        <div id="text-size-error" class="alert alert-error" style="display:none">
+                            <strong>Not enough text!</strong> The site needs at least 5,000 characters of text to infer meaningful relationships. Please enter more text and try again.
+                        </div>
                         <p>You've decided to create something beautiful, good to hear! It's pretty simple from here. Just copy and paste the text you want to use for your creation below.</p>
                     </div>
                 </div>
@@ -90,6 +93,10 @@
                 var chars = $("#theText > textarea").val().length;
                 if (chars < 5000 || chars > 100000) {
                     $("#theText").addClass("error");
+                    if (chars < 5000) {
+                        $('.alert-error').hide();
+                        $('#text-size-error').show();
+                    }
                     return false;
                 }
             });
