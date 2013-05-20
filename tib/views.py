@@ -47,7 +47,7 @@ def result(request):
 
             if 'wikipedia.org/wiki/' in url:
                 resp, content = httplib2.Http().request(url, headers={'User-Agent':'textisbeautiful.net/1.0'})
-                text = html2text.html2text(content.decode('utf-8'))
+                text = html2text.html2text(content.decode('utf-8', errors='ignore'))
             else:
                 return render(request, 'create.html', {'wiki_error': True})
 
