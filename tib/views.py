@@ -11,9 +11,10 @@ from django.core.mail import mail_admins
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 import time
 import httplib2
+
 from tib import html2text
 from tib import utils
 from tib.forms import ContactForm, FeedbackForm
@@ -129,6 +130,8 @@ def contact_email(request):
                 "email_failed": True,
                 "message": '(err: form validation)'
             })
+    else:
+        return redirect('contact')
 
 def feedback(request):
     """
