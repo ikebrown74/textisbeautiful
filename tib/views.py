@@ -8,10 +8,13 @@ import urllib
 import boto
 from django.conf import settings
 from django.core.mail import mail_admins
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 import time
 import httplib2
+
 from tib import html2text
 from tib import utils
 from tib.forms import ContactForm, FeedbackForm
@@ -32,14 +35,23 @@ def result(request):
         else:
             # Wikipedia link
             url = request.POST['wiki_url']
+            url = url.replace('https://', 'http://')
+            if not url.startswith('http://'):
+                url = 'http://' + url
+
+             # Validate URL
+            val = URLValidator(verify_exists=False)
+            try:
+                val(url)
+            except ValidationError, e:
+                return render(request, 'create.html', {'wiki_error': True})
+
             if 'wikipedia.org/wiki/' in url:
-                url = url.replace('https://', 'http://')
-                if not url.startswith('http://'):
-                    url = 'http://' + url
                 resp, content = httplib2.Http().request(url, headers={'User-Agent':'textisbeautiful.net/1.0'})
-                text = html2text.html2text(content.decode('utf-8'))
+                text = html2text.html2text(content.decode('utf-8', errors='ignore'))
             else:
                 return render(request, 'create.html', {'wiki_error': True})
+
         # Unique ID for this search uses current time and the text
         id = hashlib.md5('{0}:{1}'.format(time.time(), text.encode('utf8'))).hexdigest()
         # Write the text to a file (really shouldn't need to do this but oh well).
@@ -118,6 +130,8 @@ def contact_email(request):
                 "email_failed": True,
                 "message": '(err: form validation)'
             })
+    else:
+        return redirect('contact')
 
 def feedback(request):
     """
